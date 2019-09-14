@@ -31,7 +31,7 @@ if graficarPolinomios:
     plt.figure()
     t = np.arange(-1, 1.1, 0.1)  # Rango de prueba (test)
     for i in range(1, 6):
-        plt.plot(t, hermite(t, i) * 2 ** (-i), label="Grado " + str(i))
+        plt.plot(t, H(t, i) * 2 ** (-i), label="Grado " + str(i))
         # plt.plot(t, H(t, i) * 2 ** (-i), label="Grado " + str(i))
         plt.legend()
         plt.title("Polinomios Ortogonales de s-Hermite")
@@ -83,7 +83,6 @@ else:
 # *********************************************
 X = np.array(X)
 if calcularGram:
-    # X_gram = sHerm_kernel(X, Y, degree=degree_sH)
     X_gram = sHerm_kernel(X, Y, degree=degree_sH)
     print(X_gram)
     print("\n****VERIFICANDO MATRIZ GRAM*****")
