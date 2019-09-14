@@ -1,10 +1,6 @@
-from scipy.special import eval_hermitenorm
 import numpy as np
-from sklearn.metrics.pairwise import pairwise_kernels
 from numba import njit
-from joblib import Memory, Parallel, delayed
-from padierna_modules.plots import plot_svc_decision_function
-import matplotlib.pyplot as plt
+from joblib import Memory
 from sklearn.svm import SVC
 
 
@@ -90,7 +86,7 @@ list_dicts = [
     {"C": C_rbf, "kernel": "rbf", "gamma": gamma_rbf},
     {"C": C_sH, "kernel": kernel_special_hermite, "degree": degree_sH},
 ]
-svc_lists = [SVC(**i).fit(X, y) for i in list_dicts]
+svc_lists = [SVC(**d).fit(X, y) for d in list_dicts]
 for i in svc_lists:
     print(i.support_)
     # GRAFICANDO MSV CON RBF y S-HERM.
