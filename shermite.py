@@ -63,7 +63,7 @@ def kernel_special_hermite(X, y=None, degree=2):
     X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
 
     if not y is None:
-        result = np.dot(np.dot(X_gram, X), y.T)
+        result = (X_gram @ X) @ y.T
 
         return result
 
