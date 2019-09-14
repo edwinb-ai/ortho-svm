@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from sklearn.datasets.samples_generator import make_circles
 from padierna_modules.plots import plot_svc_decision_function
-from scipy.special import eval_hermitenorm
+
 
 # SELECCIÓN DE PROCESAMIENTO
 # *********************************************
@@ -17,32 +17,12 @@ calcularGram = True
 def H(x_i, n):
 
     if n == 0:
-      return 1.0
+        return 1.0
 
     if n == 1:
-      return x_i
+        return x_i
 
     return x_i * H(x_i, n - 1) - (n - 1) * H(x_i, n - 2)
-
-
-def hermite(x, n):
-
-    primer_valor = 1.0
-    segundo_valor = x
-
-    if n == 0:
-        return primer_valor
-    elif n == 1:
-        return segundo_valor
-    else:
-        resultado = 0.0
-
-        for i in range(1, n):
-            resultado = x * segundo_valor - i * primer_valor
-            primer_valor = segundo_valor
-            segundo_valor = resultado
-
-        return resultado
 
 
 # MOSTRANDO POLINOMIOS DE S-HERMITE PARA VALIDAR LA FUNCIÓN H(x_i,n) ESCALADA
@@ -71,7 +51,6 @@ def sHerm_kernel(X, Y=None, degree=2):
                     summ = 1
                     for k in range(1, degree + 1, 1):
                         summ += H(x[i], k) * H(z[j], k) * (2 ** (-2 * k))
-                        # summ += hermite(x[i], k) * hermite(z[j], k) * (2 ** (-2 * k))
                     mult *= summ
                     i += 1
                     j += 1
@@ -83,20 +62,6 @@ def sHerm_kernel(X, Y=None, degree=2):
             X_gram[l][m] = mult
     return np.array(X_gram)
 
-
-# def special_hermite(x, z, n):
-
-#     prod_1 = eval_hermitenorm(n, x) * eval_hermitenorm(n, z)
-#     prod_2 = np.exp(-0.5 * (x ** 2 + z ** 2))
-#     result = prod_1 * prod_2 * 2.0 ** (- 2.0 ** n)
-
-#     return result
-
-# def kernel_special_hermite(x, z, n):
-
-#     degrees = np.arange(0, n + 1)
-#     sum_values = [special_hermite(x, z, i) for i in degrees]
-    
 
 # SELECCIÓN DEL DATASET
 # *********************************************
@@ -117,10 +82,9 @@ else:
 # VERIFICANDO MATRIZ GRAMIANA DE S-HERM
 # *********************************************
 X = np.array(X)
-test_matrix = np.array([[1.0, 2.0], [2.0, 1.0]])
 if calcularGram:
     # X_gram = sHerm_kernel(X, Y, degree=degree_sH)
-    X_gram = sHerm_kernel(test_matrix, Y, degree=degree_sH)
+    X_gram = sHerm_kernel(X, Y, degree=degree_sH)
     print(X_gram)
     print("\n****VERIFICANDO MATRIZ GRAM*****")
     print(type(X_gram))
@@ -129,41 +93,45 @@ if calcularGram:
     print("Valores tipo NAN: ", NANs)
 
 # # ENTRENANDO Y GRAFICANDO MSV CON RBF y S-HERM.
-# plt.figure()
-# clf = SVC(kernel="rbf", C=C_rbf, gamma=gamma_rbf).fit(X, Y)
-# clf2 = SVC(kernel=sHerm_kernel, C=C_sH, degree=degree_sH).fit(X, Y)
-# plt.subplot(1, 2, 1)
-# plt.title(
-#     "MSV-RBF: C="
-#     + str(C_rbf)
-#     + ",gamma="
-#     + str(gamma_rbf)
-#     + ",SVs="
-#     + str(len(clf.support_))
-# )
-# plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
-# plot_svc_decision_function(clf, X, plot_support=True)
-# plt.subplot(1, 2, 2)
-# plt.title(
-#     "MSV-sHerm: C="
-#     + str(C_sH)
-#     + " n="
-#     + str(degree_sH)
-#     + ",SVs="
-#     + str(len(clf2.support_))
-# )
-# plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
-# clf2.support_vectors_ = X[np.array(clf2.support_), :]
-# plot_svc_decision_function(clf2, X, plot_support=True, customKernel=True)
-# print("\n*************************************************************")
-# print("RESULTADOS DE MODELOS RBF Y S-HERM")
-# print("***************************************************************")
-# print(
-#     "Vectores Soporte (VS) RBF:\t" + str(len(clf.support_)),
-#     "\ts-Herm: ",
-#     str(len(clf2.support_)),
-# )
-# print("PSV: {0} {1}".format(len(clf.support_) * 100.0 / X.shape[0], len(clf2.support_) * 100.0 / X.shape[0]))
-# print("VS por Clase RBF:\t\t" + str(clf.n_support_), "\ts-Herm: ", str(clf2.n_support_))
-# print("Indices VS RBF:\t\t\t" + str(clf.support_), "\ts-Herm: ", str(clf2.support_))
+plt.figure()
+clf = SVC(kernel="rbf", C=C_rbf, gamma=gamma_rbf).fit(X, Y)
+clf2 = SVC(kernel=sHerm_kernel, C=C_sH, degree=degree_sH).fit(X, Y)
+plt.subplot(1, 2, 1)
+plt.title(
+    "MSV-RBF: C="
+    + str(C_rbf)
+    + ",gamma="
+    + str(gamma_rbf)
+    + ",SVs="
+    + str(len(clf.support_))
+)
+plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
+plot_svc_decision_function(clf, X, plot_support=True)
+plt.subplot(1, 2, 2)
+plt.title(
+    "MSV-sHerm: C="
+    + str(C_sH)
+    + " n="
+    + str(degree_sH)
+    + ",SVs="
+    + str(len(clf2.support_))
+)
+plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
+clf2.support_vectors_ = X[np.array(clf2.support_), :]
+plot_svc_decision_function(clf2, X, plot_support=True, customKernel=True)
+print("\n*************************************************************")
+print("RESULTADOS DE MODELOS RBF Y S-HERM")
+print("***************************************************************")
+print(
+    "Vectores Soporte (VS) RBF:\t" + str(len(clf.support_)),
+    "\ts-Herm: ",
+    str(len(clf2.support_)),
+)
+print(
+    "PSV: {0} {1}".format(
+        len(clf.support_) * 100.0 / X.shape[0], len(clf2.support_) * 100.0 / X.shape[0]
+    )
+)
+print("VS por Clase RBF:\t\t" + str(clf.n_support_), "\ts-Herm: ", str(clf2.n_support_))
+print("Indices VS RBF:\t\t\t" + str(clf.support_), "\ts-Herm: ", str(clf2.support_))
 
