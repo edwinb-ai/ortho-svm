@@ -32,7 +32,6 @@ if graficarPolinomios:
     t = np.arange(-1, 1.1, 0.1)  # Rango de prueba (test)
     for i in range(1, 6):
         plt.plot(t, H(t, i) * 2 ** (-i), label="Grado " + str(i))
-        # plt.plot(t, H(t, i) * 2 ** (-i), label="Grado " + str(i))
         plt.legend()
         plt.title("Polinomios Ortogonales de s-Hermite")
 
@@ -133,4 +132,4 @@ print(
 )
 print("VS por Clase RBF:\t\t" + str(clf.n_support_), "\ts-Herm: ", str(clf2.n_support_))
 print("Indices VS RBF:\t\t\t" + str(clf.support_), "\ts-Herm: ", str(clf2.support_))
-
+plt.show()

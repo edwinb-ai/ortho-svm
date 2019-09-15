@@ -2,6 +2,9 @@ import numpy as np
 from numba import njit
 from joblib import Memory
 from sklearn.svm import SVC
+from sklearn.preprocessing import MinMaxScaler
+from padierna_modules.plots import plot_svc_decision_function
+import matplotlib.pyplot as plt
 
 
 cache_dir = "/tmp/"
@@ -68,6 +71,8 @@ def kernel_special_hermite(X, y=None, degree=2):
 
 fourclass = np.genfromtxt("fourclass1.csv", delimiter=",", skip_header=1)
 X, y = fourclass[:, 0:2], fourclass[:, 2]
+# Escalar a -1 y 1
+X = MinMaxScaler(feature_range=(-1.0, 1.0)).fit_transform(X)
 # PARÁMETROS ÓPTIMOS (Del artículo sobre Gegenbauer)
 # *********************************************
 C_rbf, gamma_rbf = 30.42, 3.82  # RBF    - Fourclass
@@ -87,6 +92,7 @@ list_dicts = [
     {"C": C_sH, "kernel": kernel_special_hermite, "degree": degree_sH},
 ]
 svc_lists = [SVC(**d).fit(X, y) for d in list_dicts]
+plt.figure()
 for i in svc_lists:
     print(i.support_)
     # GRAFICANDO MSV CON RBF y S-HERM.
@@ -99,3 +105,6 @@ for i in svc_lists:
     print("PSV: {}".format(len(i.support_) * 100.0 / X.shape[0]))
     print("VS por Clase RBF: {}".format(i.n_support_))
     print("Indices VS RBF: {}".format(i.support_))
+    plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap="cool")
+    plot_svc_decision_function(svc_lists[1], X, plot_support=True, customKernel=True)
+plt.show()
