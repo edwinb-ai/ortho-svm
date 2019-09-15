@@ -73,3 +73,4 @@ def KGEG_generator(alpha, degree):
 if __name__ == "__main__":
 
     print(Pochhammer(3, 4))
+    print(Cn(5.0, 10, 2))
