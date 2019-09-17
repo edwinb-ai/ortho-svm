@@ -16,7 +16,7 @@ def pochhammer(x, n):
 
 
 @njit
-def gegenbauer_c(x, n, a):
+def gegenbauerc(x, n, a):
 
     first_value = 1.0
     second_value = 2.0 * a * x
@@ -29,8 +29,8 @@ def gegenbauer_c(x, n, a):
         result = 0.0
 
         for i in range(2, n + 1):
-            result = (
-                2.0 * x * (i + a - 1.0) * second_value - ((i + 2.0 * a - 2.0) * first_value)
+            result = 2.0 * x * (i + a - 1.0) * second_value - (
+                (i + 2.0 * a - 2.0) * first_value
             )
             result /= i
             first_value = second_value
@@ -39,16 +39,25 @@ def gegenbauer_c(x, n, a):
         return result
 
 
-def w(x, z, a):
+@njit
+def weights(x, z, a):
     if -0.5 < a <= 0.5:
-        return 1
+        return 1.0
+
     elif a > 0.5:
-        return ((1 - x ** 2) * (1 - z ** 2)) ** (a - 0.5) + 0.1
+        term_1 = (1.0 - x ** 2.0) * (1.0 - z ** 2.0)
+        result = np.power(term_1, a - 0.5) + 0.1
+
+        return result
 
 
-def u(k, alpha, n):
+def u_scaling(k, a, n):
 
-    return Pochhammer(2 * alpha, k) / (Pochhammer(1, k) * math.sqrt(n + 1))
+    term_1 = 1.0 / np.sqrt(n + 1.0)
+    term_2 = pochhammer(2.0 * a, k) / pochhammer(1.0, k)
+    result = term_1 * term_2
+
+    return result
 
 
 def Kgeg(x, z, a, n):
@@ -76,4 +85,6 @@ def KGEG_generator(alpha, degree):
 if __name__ == "__main__":
 
     print(pochhammer(3, 4))
-    print(gegenbauer_c(3.5, 7, 3))
+    print(gegenbauerc(5.0, 10, 2))
+    print(weights(2.0, 3.0, 1.5))
+    print(u_scaling(4, 1.5, 4))

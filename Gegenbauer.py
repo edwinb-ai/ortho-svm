@@ -74,3 +74,6 @@ if __name__ == "__main__":
 
     print(Pochhammer(3, 4))
     print(Cn(5.0, 10, 2))
+    print(w(2.0, 3.0, 1.5))
+    print(u(4, 1.5, 4))
+
