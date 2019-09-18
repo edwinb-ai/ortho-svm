@@ -5,6 +5,9 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import MinMaxScaler
 from padierna_modules.plots import plot_svc_decision_function
 import matplotlib.pyplot as plt
+from multiprocessing import Pool
+from itertools import repeat
+from sklearn.model_selection import  RepeatedKFold
 
 
 cache_dir = "/tmp/"
@@ -44,7 +47,7 @@ def special_hermite(x, z, n=6):
 
 
 @memory.cache
-def kernel_special_hermite(X, y=None, degree=2):
+def kernel_special_hermite(X, degree=2):
     X_gram = np.zeros((X.shape[0], X.shape[0]))
     for l, x in enumerate(X):
         for m, z in enumerate(X):
@@ -60,11 +63,6 @@ def kernel_special_hermite(X, y=None, degree=2):
             X_gram[l, m] = mult
     # Completar la matriz simétrica con la parte superior de la matriz triangular
     X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
-
-    if not y is None:
-        result = (X_gram @ X) @ y.T
-
-        return result
 
     return X_gram
 
@@ -87,24 +85,53 @@ print("Gram Max =", X_gram.max(), "Gram min =", X_gram.min())
 NANs = np.argwhere(np.isnan(X_gram))
 print("Valores tipo NAN: ", NANs)
 # # ENTRENANDO MSV CON RBF y S-HERM.
-list_dicts = [
-    {"C": C_rbf, "kernel": "rbf", "gamma": gamma_rbf},
-    {"C": C_sH, "kernel": kernel_special_hermite, "degree": degree_sH},
-]
-svc_lists = [SVC(**d).fit(X, y) for d in list_dicts]
-plt.figure()
-for i in svc_lists:
-    print(i.support_)
-    # GRAFICANDO MSV CON RBF y S-HERM.
-    i.support_vectors_ = X[i.support_, :]
-    # plot_svc_decision_function(i, X, plot_support=True, customKernel=True)
-    print("\n*************************************************************")
-    print("RESULTADOS DE MODELOS RBF Y S-HERM")
-    print("***************************************************************")
-    print("Vectores Soporte (VS) RBF: {}".format(len(i.support_)))
-    print("PSV: {}".format(len(i.support_) * 100.0 / X.shape[0]))
-    print("VS por Clase RBF: {}".format(i.n_support_))
-    print("Indices VS RBF: {}".format(i.support_))
-    plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap="cool")
-    plot_svc_decision_function(svc_lists[1], X, plot_support=True, customKernel=True)
-plt.show()
+rbf_dict = {"C": C_rbf, "kernel": "rbf", "gamma": gamma_rbf}
+dict_hermite = {"C": C_sH, "kernel": "precomputed"}
+
+svc_hermite = SVC(**dict_hermite)
+svc_rbf = SVC(**rbf_dict)
+
+rscv = RepeatedKFold(n_splits=10, n_repeats=35)
+
+def train_model(params):
+
+    model, x, y = params
+    x = np.array(x)
+    y = np.array(y)
+    result = []
+    for i, j in zip(x, y):
+        gram = kernel_special_hermite(i, degree=degree_sH)
+        vectors = model.fit(gram, j).support_
+        result.append(len(vectors))
+
+    return result
+
+
+svc_1 = []
+x_training = []
+y_training = []
+
+for train_idx, _ in rscv.split(X):
+
+    x_training.append(X[train_idx])
+    y_training.append(y[train_idx])
+
+x_split = np.split(np.array(x_training), 5)
+y_split = np.split(np.array(y_training), 5)
+
+with Pool(4) as pool:
+
+    svc_1.append(
+        pool.map_async(
+            train_model,
+            zip(
+                repeat(svc_hermite),
+                [i for i in x_split[:4]],
+                [i for i in y_split[:4]],
+            ),
+        ).get()
+    )
+
+psv = np.array(svc_1) * 100.0 / len(X)
+print(psv.mean(), psv.std())
+print(psv)
