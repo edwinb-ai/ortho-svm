@@ -73,7 +73,6 @@ X, y = fourclass[:, 0:2], fourclass[:, 2]
 X = MinMaxScaler(feature_range=(-1.0, 1.0)).fit_transform(X)
 # PARÁMETROS ÓPTIMOS (Del artículo sobre Gegenbauer)
 # *********************************************
-C_rbf, gamma_rbf = 30.42, 3.82  # RBF    - Fourclass
 C_sH, degree_sH = 25.20, 6  # s-Herm - Fourclass
 # VERIFICANDO MATRIZ GRAMIANA DE S-HERM
 # *********************************************
@@ -85,11 +84,9 @@ print("Gram Max =", X_gram.max(), "Gram min =", X_gram.min())
 NANs = np.argwhere(np.isnan(X_gram))
 print("Valores tipo NAN: ", NANs)
 # # ENTRENANDO MSV CON RBF y S-HERM.
-rbf_dict = {"C": C_rbf, "kernel": "rbf", "gamma": gamma_rbf}
 dict_hermite = {"C": C_sH, "kernel": "precomputed"}
 
 svc_hermite = SVC(**dict_hermite)
-svc_rbf = SVC(**rbf_dict)
 
 rscv = RepeatedKFold(n_splits=10, n_repeats=35)
 
@@ -132,6 +129,7 @@ with Pool(4) as pool:
         ).get()
     )
 
-psv = np.array(svc_1) * 100.0 / len(X)
+svc_1 = np.array(svc_1).ravel()
+svc_1 = np.append(svc_1, train_model((svc_hermite, x_split[-1], y_split[-1])))
+psv = np.array(svc_1) * 100.0 / len(x_training[0])
 print(psv.mean(), psv.std())
-print(psv)
