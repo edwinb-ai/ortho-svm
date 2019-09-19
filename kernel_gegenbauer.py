@@ -56,20 +56,20 @@ def weights(x, z, a):
         return result
 
 
-def u_scaling(k, a, n):
+def u_scaling(k, a):
 
-    term_1 = 1.0 / np.sqrt(n + 1.0)
+    term_1 = 1.0 / np.sqrt(k + 1.0)
     term_2 = pochhammer(2.0 * a, k) / pochhammer(1.0, k)
     result = term_1 * term_2
 
     return result
 
 
-def kernel_ggb(x, z, a, n, k):
+def kernel_ggb(x, z, a, n):
 
-    term_1 = gegenbauerc(x, k, a) * gegenbauerc(z, k, a)
+    term_1 = gegenbauerc(x, n, a) * gegenbauerc(z, n, a)
     term_1 *= weights(x, z, a)
-    term_1 *= u_scaling(k, a, n) ** 2.0
+    term_1 *= u_scaling(n, a) ** 2.0
 
     return term_1
 
@@ -84,7 +84,7 @@ def ggb_gram(X, alpha, degree=2):
             mult = 1.0
             for j, u in zip(x, z):
                 sum_res = 1.0 + sum(
-                    kernel_ggb(j, u, alpha, degree, p) for p in range(1, degree + 1)
+                    kernel_ggb(j, u, alpha, p) for p in range(1, degree + 1)
                 )
                 mult *= sum_res
             X_gram[l, m] = mult
