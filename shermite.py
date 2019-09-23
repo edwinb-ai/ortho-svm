@@ -7,7 +7,7 @@ from padierna_modules.plots import plot_svc_decision_function
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
 from itertools import repeat
-from sklearn.model_selection import  RepeatedKFold
+from sklearn.model_selection import StratifiedKFold
 
 
 cache_dir = "/tmp/"
@@ -88,11 +88,11 @@ dict_hermite = {"C": C_sH, "kernel": "precomputed"}
 
 svc_hermite = SVC(**dict_hermite)
 
-rscv = RepeatedKFold(n_splits=10, n_repeats=35)
+rscv = StratifiedKFold(n_splits=10)
 
-def train_model(params):
+# def train_model(params):
+def train_model(model, x, y):
 
-    model, x, y = params
     x = np.array(x)
     y = np.array(y)
     result = []
@@ -105,31 +105,32 @@ def train_model(params):
 
 
 svc_1 = []
-x_training = []
+x_training = 0
 y_training = []
 
-for train_idx, _ in rscv.split(X):
+for train_idx, _ in rscv.split(X, y):
 
-    x_training.append(X[train_idx])
-    y_training.append(y[train_idx])
+    x_training = len(X[train_idx])
+    X_gram = kernel_special_hermite(X[train_idx], degree=degree_sH)
+    svc_1.append(len(svc_hermite.fit(X_gram, y[train_idx]).support_))
 
-x_split = np.split(np.array(x_training), 5)
-y_split = np.split(np.array(y_training), 5)
+# x_split = np.split(np.array(x_training), 5)
+# y_split = np.split(np.array(y_training), 5)
 
-with Pool(4) as pool:
+# with Pool(4) as pool:
 
-    svc_1.append(
-        pool.map_async(
-            train_model,
-            zip(
-                repeat(svc_hermite),
-                [i for i in x_split[:4]],
-                [i for i in y_split[:4]],
-            ),
-        ).get()
-    )
+#     svc_1.append(
+#         pool.map_async(
+#             train_model,
+#             zip(
+#                 repeat(svc_hermite),
+#                 [i for i in x_split[:4]],
+#                 [i for i in y_split[:4]],
+#             ),
+#         ).get()
+#     )
 
-svc_1 = np.array(svc_1).ravel()
-svc_1 = np.append(svc_1, train_model((svc_hermite, x_split[-1], y_split[-1])))
-psv = np.array(svc_1) * 100.0 / len(x_training[0])
+# svc_1 = np.array(svc_1).ravel()
+# svc_1 = np.append(svc_1, train_model((svc_hermite, x_split[-1], y_split[-1])))
+psv = np.array(svc_1) * 100.0 / x_training
 print(psv.mean(), psv.std())

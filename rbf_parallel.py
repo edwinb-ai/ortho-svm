@@ -3,7 +3,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import MinMaxScaler
 from multiprocessing import Pool
 from itertools import repeat
-from sklearn.model_selection import  RepeatedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
 
 
 fourclass = np.genfromtxt("fourclass1.csv", delimiter=",", skip_header=1)
@@ -17,7 +17,7 @@ C_rbf, gamma_rbf = 30.42, 3.82  # RBF    - Fourclass
 rbf_dict = {"C": C_rbf, "kernel": "rbf", "gamma": gamma_rbf}
 svc_rbf = SVC(**rbf_dict)
 
-rscv = RepeatedKFold(n_splits=10, n_repeats=35)
+rscv = RepeatedStratifiedKFold(n_splits=10, n_repeats=35)
 
 def train_model(params):
 
@@ -26,7 +26,7 @@ def train_model(params):
     y = np.array(y)
     result = []
     for i, j in zip(x, y):
-        vectors = model.fit(i, j).support_
+        vectors = model.fit(i, j).support_vectors_
         result.append(len(vectors))
 
     return result
@@ -36,7 +36,7 @@ svc_1 = []
 x_training = []
 y_training = []
 
-for train_idx, _ in rscv.split(X):
+for train_idx, _ in rscv.split(X, y):
 
     x_training.append(X[train_idx])
     y_training.append(y[train_idx])
