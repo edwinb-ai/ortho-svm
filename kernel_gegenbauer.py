@@ -107,51 +107,51 @@ print("Gram Max =", X_gram.max(), "Gram min =", X_gram.min())
 NANs = np.argwhere(np.isnan(X_gram))
 print("Valores tipo NAN: ", NANs)
 
-dict_ggb = {"C": 31.52, "kernel": "precomputed"}
+# dict_ggb = {"C": 31.52, "kernel": "precomputed"}
 
-svc_ggb = SVC(**dict_ggb)
+# svc_ggb = SVC(**dict_ggb)
 
-rscv = RepeatedKFold(n_splits=10, n_repeats=35)
-
-
-def train_model(params):
-
-    model, x, y = params
-    x = np.array(x)
-    y = np.array(y)
-    result = []
-    for i, j in zip(x, y):
-        gram = ggb_gram(i, -0.42, degree=6)
-        vectors = model.fit(gram, j).support_
-        result.append(len(vectors))
-
-    return result
+# rscv = RepeatedKFold(n_splits=10, n_repeats=35)
 
 
-svc_1 = []
-x_training = []
-y_training = []
+# def train_model(params):
 
-for train_idx, _ in rscv.split(X):
+#     model, x, y = params
+#     x = np.array(x)
+#     y = np.array(y)
+#     result = []
+#     for i, j in zip(x, y):
+#         gram = ggb_gram(i, -0.42, degree=6)
+#         vectors = model.fit(gram, j).support_
+#         result.append(len(vectors))
 
-    x_training.append(X[train_idx])
-    y_training.append(y[train_idx])
+#     return result
 
-x_split = np.split(np.array(x_training), 5)
-y_split = np.split(np.array(y_training), 5)
 
-with Pool(4) as pool:
+# svc_1 = []
+# x_training = []
+# y_training = []
 
-    svc_1.append(
-        pool.map_async(
-            train_model,
-            zip(
-                repeat(svc_ggb), [i for i in x_split[:4]], [i for i in y_split[:4]]
-            ),
-        ).get()
-    )
+# for train_idx, _ in rscv.split(X):
 
-svc_1 = np.array(svc_1).ravel()
-svc_1 = np.append(svc_1, train_model((svc_ggb, x_split[-1], y_split[-1])))
-psv = np.array(svc_1) * 100.0 / len(x_training[0])
-print(psv.mean(), psv.std())
+#     x_training.append(X[train_idx])
+#     y_training.append(y[train_idx])
+
+# x_split = np.split(np.array(x_training), 5)
+# y_split = np.split(np.array(y_training), 5)
+
+# with Pool(4) as pool:
+
+#     svc_1.append(
+#         pool.map_async(
+#             train_model,
+#             zip(
+#                 repeat(svc_ggb), [i for i in x_split[:4]], [i for i in y_split[:4]]
+#             ),
+#         ).get()
+#     )
+
+# svc_1 = np.array(svc_1).ravel()
+# svc_1 = np.append(svc_1, train_model((svc_ggb, x_split[-1], y_split[-1])))
+# psv = np.array(svc_1) * 100.0 / len(x_training[0])
+# print(psv.mean(), psv.std())
