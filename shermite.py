@@ -48,8 +48,6 @@ def kernel_special_hermite(X, degree=2):
 
     for l, x in enumerate(X):
         for m, z in enumerate(X):
-            # print(X[l], X[m])
-            # break
             # Aprovechar la simetría de la matriz
             if l > m:
                 continue
