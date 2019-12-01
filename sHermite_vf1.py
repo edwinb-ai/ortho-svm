@@ -9,7 +9,7 @@ from padierna_modules.plots import plot_svc_decision_function
 # SELECCIÓN DE PROCESAMIENTO
 # *********************************************
 analizarFourclass = True
-graficarPolinomios = True
+graficarPolinomios = False
 calcularGram = True
 
 # POLINOMIO HERMITE
@@ -43,13 +43,13 @@ def sHerm_kernel(X, Y=None, degree=2):
     X_gram = np.zeros((X.shape[0], X.shape[0]))
     for l, x in enumerate(X):
         for m, z in enumerate(X):
-            summ, mult, i, j = 0, 1, 0, 0
+            summ, mult, i, j = 0.0, 1.0, 0, 0
             xlen, zlen = x.size, z.size
             while i < xlen and j < zlen:
                 if i == j:
-                    summ = 1
-                    for k in range(1, degree + 1, 1):
-                        summ += H(x[i], k) * H(z[j], k) * (2 ** (-2 * k))
+                    summ = 1.0
+                    for k in range(1, degree + 1):
+                        summ += H(x[i], k) * H(z[j], k) * (2 ** (-2 * degree))
                     mult *= summ
                     i += 1
                     j += 1
