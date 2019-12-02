@@ -1,5 +1,10 @@
 import numpy as np
 from numba import njit
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.svm import SVC
+from multiprocessing import Pool
+from itertools import repeat
+from sklearn.model_selection import RepeatedKFold
 
 
 def pochhammer(x, n):
@@ -51,40 +56,103 @@ def weights(x, z, a):
         return result
 
 
-def u_scaling(k, a, n):
+def u_scaling(k, a):
 
-    term_1 = 1.0 / np.sqrt(n + 1.0)
+    term_1 = 1.0 / np.sqrt(k + 1.0)
     term_2 = pochhammer(2.0 * a, k) / pochhammer(1.0, k)
     result = term_1 * term_2
 
     return result
 
 
-def Kgeg(x, z, a, n):
-    mult = 1
-    for j in range(0, len(x)):
-        suma = 0
-        for i in range(1, n + 1):
-            suma += Cn(x[j], i, a) * Cn(z[j], i, a) * w(x[j], z[j], a) * u(i, a, n) ** 2
-        mult *= suma
-    return mult
+def kernel_ggb(x, z, a, n):
+
+    term_1 = gegenbauerc(x, n, a) * gegenbauerc(z, n, a)
+    term_1 *= weights(x, z, a)
+    term_1 *= u_scaling(n, a) ** 2.0
+
+    return term_1
 
 
-def KGEG_generator(alpha, degree):
-    def KGEG(X, Z):
-        matgram = np.empty((len(X), len(Z)))
-        for i in range(len(X)):
-            for j in range(i + 1):
-                matgram[i, j] = Kgeg(X[i], Z[j], alpha, degree)
-                matgram[j, i] = matgram[i, j]
-        return matgram
+# TODO: Corregir el código, ajustar esta función para que se asemeje al código original
+def ggb_gram(X, alpha, degree=2):
+    X_gram = np.zeros((X.shape[0], X.shape[0]))
+    for l, x in enumerate(X):
+        for m, z in enumerate(X):
+            # Aprovechar la simetría de la matriz
+            if l > m:
+                continue
+            mult = 1.0
+            for j, u in zip(x, z):
+                sum_res = 1.0 + sum(
+                    kernel_ggb(j, u, alpha, p) for p in range(1, degree + 1)
+                )
+                mult *= sum_res
+            X_gram[l, m] = mult
+    # Completar la matriz simétrica con la parte superior de la matriz triangular
+    X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
 
-    return KGEG
+    return X_gram
 
 
-if __name__ == "__main__":
+fourclass = np.genfromtxt("fourclass1.csv", delimiter=",", skip_header=1)
+X, y = fourclass[:, 0:2], fourclass[:, 2]
+# Escalar a -1 y 1
+X = MinMaxScaler(feature_range=(-1.0, 1.0)).fit_transform(X)
+X_gram = ggb_gram(X, -0.42, degree=6)
+print(X_gram)
+print(X_gram.shape)
+print("\n****VERIFICANDO MATRIZ GRAM*****")
+print(type(X_gram))
+print("Gram Max =", X_gram.max(), "Gram min =", X_gram.min())
+NANs = np.argwhere(np.isnan(X_gram))
+print("Valores tipo NAN: ", NANs)
 
-    print(pochhammer(3, 4))
-    print(gegenbauerc(5.0, 10, 2))
-    print(weights(2.0, 3.0, 1.5))
-    print(u_scaling(4, 1.5, 4))
+# dict_ggb = {"C": 31.52, "kernel": "precomputed"}
+
+# svc_ggb = SVC(**dict_ggb)
+
+# rscv = RepeatedKFold(n_splits=10, n_repeats=35)
+
+
+# def train_model(params):
+
+#     model, x, y = params
+#     x = np.array(x)
+#     y = np.array(y)
+#     result = []
+#     for i, j in zip(x, y):
+#         gram = ggb_gram(i, -0.42, degree=6)
+#         vectors = model.fit(gram, j).support_
+#         result.append(len(vectors))
+
+#     return result
+
+
+# svc_1 = []
+# x_training = []
+# y_training = []
+
+# for train_idx, _ in rscv.split(X):
+
+#     x_training.append(X[train_idx])
+#     y_training.append(y[train_idx])
+
+# x_split = np.split(np.array(x_training), 5)
+# y_split = np.split(np.array(y_training), 5)
+
+# with Pool(4) as pool:
+
+#     svc_1.append(
+#         pool.map_async(
+#             train_model,
+#             zip(
+#                 repeat(svc_ggb), [i for i in x_split[:4]], [i for i in y_split[:4]]
+#             ),
+#         ).get()
+#     )
+
+# svc_1 = np.array(svc_1).ravel()
+# svc_1 = np.append(svc_1, train_model((svc_ggb, x_split[-1], y_split[-1])))
+# psv = np.array(svc_1) * 100.0 / len(x_training[0])
+# print(psv.mean(), psv.std())

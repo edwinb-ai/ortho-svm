@@ -2,3 +2,5 @@
 
 Implementaciones de kernels basadas en polinomios ortogonales para Máquinas
 de Soporte Vectorial (SVMs).
+
+Some tests.
