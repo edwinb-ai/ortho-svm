@@ -46,6 +46,10 @@ def sHerm_kernel(X, degree=2):
     for l, x in enumerate(X):
         for m, z in enumerate(X):
             summ, mult, i, j = 1.0, 1.0, 0, 0
+            # Saltarse la triangular inferior
+            if l > m:
+                continue
+            # Computar la matriz con kernel Hermite
             while i < x.size and j < z.size:
                 if i == j:
                     summ = 1.0
@@ -60,6 +64,8 @@ def sHerm_kernel(X, degree=2):
                     else:
                         i += 1
             X_gram[l, m] = mult
+        # Completar la matriz simétrica con la parte superior de la matriz triangular
+        X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
     return np.array(X_gram)
 
 
