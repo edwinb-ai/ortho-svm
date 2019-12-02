@@ -39,17 +39,18 @@ if graficarPolinomios:
 # ********************************************
 # FALTA OPTIMIZAR EL CICLO PARA APROVECHAR SIMETRÍA DE MATRIZ
 # PUEDE OMITIRSE VALIDACIÓN DE VECTORES SPARSE.
-def sHerm_kernel(X, Y=None, degree=2):
+def sHerm_kernel(X, degree=2):
+
     X_gram = np.zeros((X.shape[0], X.shape[0]))
+
     for l, x in enumerate(X):
         for m, z in enumerate(X):
-            summ, mult, i, j = 0.0, 1.0, 0, 0
-            xlen, zlen = x.size, z.size
-            while i < xlen and j < zlen:
+            summ, mult, i, j = 1.0, 1.0, 0, 0
+            while i < x.size and j < z.size:
                 if i == j:
                     summ = 1.0
                     for k in range(1, degree + 1):
-                        summ += H(x[i], k) * H(z[j], k) * (2 ** (-2 * degree))
+                        summ += H(x[i], k) * H(z[j], k) / (2.0 ** (2 * degree))
                     mult *= summ
                     i += 1
                     j += 1
@@ -58,7 +59,7 @@ def sHerm_kernel(X, Y=None, degree=2):
                         j += 1
                     else:
                         i += 1
-            X_gram[l][m] = mult
+            X_gram[l, m] = mult
     return np.array(X_gram)
 
 
@@ -82,7 +83,7 @@ else:
 # *********************************************
 X = np.array(X)
 if calcularGram:
-    X_gram = sHerm_kernel(X, Y, degree=degree_sH)
+    X_gram = sHerm_kernel(X, degree=degree_sH)
     print(X_gram)
     print("\n****VERIFICANDO MATRIZ GRAM*****")
     print(type(X_gram))
@@ -91,45 +92,45 @@ if calcularGram:
     print("Valores tipo NAN: ", NANs)
 
 # # ENTRENANDO Y GRAFICANDO MSV CON RBF y S-HERM.
-plt.figure()
-clf = SVC(kernel="rbf", C=C_rbf, gamma=gamma_rbf).fit(X, Y)
-clf2 = SVC(kernel=sHerm_kernel, C=C_sH, degree=degree_sH).fit(X, Y)
-plt.subplot(1, 2, 1)
-plt.title(
-    "MSV-RBF: C="
-    + str(C_rbf)
-    + ",gamma="
-    + str(gamma_rbf)
-    + ",SVs="
-    + str(len(clf.support_))
-)
-plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
-plot_svc_decision_function(clf, X, plot_support=True)
-plt.subplot(1, 2, 2)
-plt.title(
-    "MSV-sHerm: C="
-    + str(C_sH)
-    + " n="
-    + str(degree_sH)
-    + ",SVs="
-    + str(len(clf2.support_))
-)
-plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
-clf2.support_vectors_ = X[np.array(clf2.support_), :]
-plot_svc_decision_function(clf2, X, plot_support=True, customKernel=True)
-print("\n*************************************************************")
-print("RESULTADOS DE MODELOS RBF Y S-HERM")
-print("***************************************************************")
-print(
-    "Vectores Soporte (VS) RBF:\t" + str(len(clf.support_)),
-    "\ts-Herm: ",
-    str(len(clf2.support_)),
-)
-print(
-    "PSV: {0} {1}".format(
-        len(clf.support_) * 100.0 / X.shape[0], len(clf2.support_) * 100.0 / X.shape[0]
-    )
-)
-print("VS por Clase RBF:\t\t" + str(clf.n_support_), "\ts-Herm: ", str(clf2.n_support_))
-print("Indices VS RBF:\t\t\t" + str(clf.support_), "\ts-Herm: ", str(clf2.support_))
-plt.show()
+# plt.figure()
+# clf = SVC(kernel="rbf", C=C_rbf, gamma=gamma_rbf).fit(X, Y)
+# clf2 = SVC(kernel=sHerm_kernel, C=C_sH, degree=degree_sH).fit(X, Y)
+# plt.subplot(1, 2, 1)
+# plt.title(
+#     "MSV-RBF: C="
+#     + str(C_rbf)
+#     + ",gamma="
+#     + str(gamma_rbf)
+#     + ",SVs="
+#     + str(len(clf.support_))
+# )
+# plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
+# plot_svc_decision_function(clf, X, plot_support=True)
+# plt.subplot(1, 2, 2)
+# plt.title(
+#     "MSV-sHerm: C="
+#     + str(C_sH)
+#     + " n="
+#     + str(degree_sH)
+#     + ",SVs="
+#     + str(len(clf2.support_))
+# )
+# plt.scatter(X[:, 0], X[:, 1], c=Y, s=50, cmap="cool")
+# clf2.support_vectors_ = X[np.array(clf2.support_), :]
+# plot_svc_decision_function(clf2, X, plot_support=True, customKernel=True)
+# print("\n*************************************************************")
+# print("RESULTADOS DE MODELOS RBF Y S-HERM")
+# print("***************************************************************")
+# print(
+#     "Vectores Soporte (VS) RBF:\t" + str(len(clf.support_)),
+#     "\ts-Herm: ",
+#     str(len(clf2.support_)),
+# )
+# print(
+#     "PSV: {0} {1}".format(
+#         len(clf.support_) * 100.0 / X.shape[0], len(clf2.support_) * 100.0 / X.shape[0]
+#     )
+# )
+# print("VS por Clase RBF:\t\t" + str(clf.n_support_), "\ts-Herm: ", str(clf2.n_support_))
+# print("Indices VS RBF:\t\t\t" + str(clf.support_), "\ts-Herm: ", str(clf2.support_))
+# plt.show()
