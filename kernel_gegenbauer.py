@@ -74,6 +74,7 @@ def kernel_ggb(x, z, a, n):
     return term_1
 
 
+# TODO: Corregir el código, ajustar esta función para que se asemeje al código original
 def ggb_gram(X, alpha, degree=2):
     X_gram = np.zeros((X.shape[0], X.shape[0]))
     for l, x in enumerate(X):
