@@ -1,5 +1,7 @@
 from numba import njit
 import json
+from scipy.special import hermitenorm
+import numpy as np
 
 
 def hermite_recurrence(x: float, n: int) -> float:
@@ -40,6 +42,15 @@ def hermite_iterative(x: float, n: int) -> float:
             second_value = result
 
         return result
+
+
+def calculate_hermite_coeffs() -> None:
+    result_dict = {}
+    for i in range(51):
+        result_dict[i] = list(reversed(hermitenorm(i).c.tolist()))
+
+    with open("hermite_expressions.json", "w+") as f:
+        f.write(json.dumps(result_dict))
 
 
 # Create the expressions dictionary

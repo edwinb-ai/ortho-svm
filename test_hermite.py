@@ -4,7 +4,7 @@ from time import time
 
 
 vals_list = [(5.0, 0, 1.0), (5.0, 1, 5.0), (5.0, 2, 24.0), (5.0, 3, 110.0)]
-timing_list = [(0.5, i) for i in range(0, 14)]
+timing_list = [(0.006, i) for i in range(41)]
 
 
 @pytest.mark.parametrize("x, n, true_val", vals_list)
