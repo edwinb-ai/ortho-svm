@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from sklearn.datasets.samples_generator import make_circles
@@ -84,8 +83,9 @@ def sHerm_kernel(X, degree=2):
 # SELECCIÓN DEL DATASET
 # *********************************************
 if analizarFourclass:
-    fourclass = pd.read_csv("fourclass1.csv")
-    X, Y = (fourclass.iloc[:, 0:2]), fourclass["Y"]
+    fourclass = np.loadtxt("fourclass1.csv", delimiter=",", skiprows=1)
+    X = fourclass[:, :2]
+    Y = fourclass[:, 2]
     # PARÁMETROS ÓPTIMOS (Del artículo sobre Gegenbauer)
     # *********************************************
     C_rbf, gamma_rbf = 30.42, 3.82  # RBF    - Fourclass
