@@ -2,11 +2,11 @@
 <%
 setup_pybind11(cfg)
 cfg['compiler_args'] = ['-std=c++17']
-cfg['sources'] = ['herm.cpp']
+cfg['sources'] = ['src/herm.cpp']
 %>
 */
 #include <pybind11/pybind11.h>
-#include "hermite.h"
+#include "src/hermite.h"
 
 namespace py = pybind11;
 
