@@ -1,4 +1,4 @@
-/*
+/*cppimport
 <%
 setup_pybind11(cfg)
 cfg['compiler_args'] = ['-std=c++17']

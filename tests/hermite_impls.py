@@ -49,13 +49,13 @@ def calculate_hermite_coeffs() -> None:
     for i in range(51):
         result_dict[i] = list(reversed(hermitenorm(i).c.tolist()))
 
-    with open("hermite_expressions.json", "w+") as f:
+    with open("tests/hermite_expressions.json", "w+") as f:
         f.write(json.dumps(result_dict))
 
 
 # Create the expressions dictionary
 he_expressions = {}
-with open("hermite_expressions.json", "r") as f:
+with open("tests/hermite_expressions.json", "r") as f:
     he_expressions = json.loads(f.read())
 
 
