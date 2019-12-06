@@ -6,11 +6,11 @@ cfg['sources'] = ['src/gegenb.cpp']
 %>
 */
 #include <pybind11/pybind11.h>
-#include "src/gegenbauer.h"
+#include "src/gegenbauer.hpp"
 
 PYBIND11_MODULE(gegenbauer, m)
 {
-    m.def("gegenbauer", &gegenbauer);
-
-    m.def("kernel", &kernel);
+    m.def("pochhammer", &pochhammer);
+    // m.def("gegenbauer", &gegenbauer);
+    // m.def("kernel", &kernel);
 }

@@ -47,13 +47,13 @@ def test_time_expr(x, n):
     print("Time elapsed, expressions: {}".format(stop - start))
 
 
-@pytest.mark.parametrize("x, n", timing_list)
-def test_time_iterative(x, n):
-    start = time()
-    result = hermite_iterative(x, n)
-    stop = time()
+# @pytest.mark.parametrize("x, n", timing_list)
+# def test_time_iterative(x, n):
+#     start = time()
+#     result = hermite_iterative(x, n)
+#     stop = time()
 
-    print("Time elapsed, iterative: {}".format(stop - start))
+#     print("Time elapsed, iterative: {}".format(stop - start))
 
 
 @pytest.mark.parametrize("x, n", timing_list)
