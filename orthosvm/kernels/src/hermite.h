@@ -1,6 +1,9 @@
 #ifndef HERMITE_H
 #define HERMITE_H
 
-double hermite(const double x, const int n);
+#include <cmath>
+
+double hermite(double x, int n);
+double kernel(double x, double y, int degree);
 
 #endif // HERMITE_H
