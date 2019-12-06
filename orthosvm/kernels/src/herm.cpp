@@ -1,6 +1,6 @@
 #include "hermite.h"
 
-double hermite(const double x, const int n)
+double hermite(double x, int n)
 {
     if (n == 0) return 1.0;
     else if (n == 1) return x;
@@ -19,4 +19,17 @@ double hermite(const double x, const int n)
 
         return result;
     }
+}
+
+double kernel(double x, double y, int degree)
+{
+    double sum_result = 0.0;
+
+    for (int k = 1; k <= degree; k++)
+    {
+        sum_result += hermite(x, k) * hermite(y, k) / std::pow(2.0, 2.0 * degree);
+    }
+
+    return sum_result;
+
 }

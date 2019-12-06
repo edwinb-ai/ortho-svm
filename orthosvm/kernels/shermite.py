@@ -2,19 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from sklearn.datasets.samples_generator import make_circles
-from padierna_modules.plots import plot_svc_decision_function
+from orthosvm.plots_modules.decision import plot_svc_decision_function
 from numba import njit
 
 
 # SELECCIÓN DE PROCESAMIENTO
 # *********************************************
-analizarFourclass = True
-graficarPolinomios = False
-calcularGram = True
+# analizarFourclass = True
+# graficarPolinomios = False
+# calcularGram = True
 
 # POLINOMIO HERMITE
 # *******************************************
-@njit
+# @njit
 def hermite(x, n):
 
     primer_valor = 1.0
@@ -37,13 +37,13 @@ def hermite(x, n):
 
 # MOSTRANDO POLINOMIOS DE S-HERMITE PARA VALIDAR LA FUNCIÓN H(x_i,n) ESCALADA
 # *********************************************
-if graficarPolinomios:
-    plt.figure()
-    t = np.arange(-1, 1.1, 0.1)  # Rango de prueba (test)
-    for i in range(1, 6):
-        plt.plot(t, hermite(t, i) * 2 ** (-i), label="Grado " + str(i))
-        plt.legend()
-        plt.title("Polinomios Ortogonales de s-Hermite")
+# if graficarPolinomios:
+#     plt.figure()
+#     t = np.arange(-1, 1.1, 0.1)  # Rango de prueba (test)
+#     for i in range(1, 6):
+#         plt.plot(t, hermite(t, i) * 2 ** (-i), label="Grado " + str(i))
+#         plt.legend()
+#         plt.title("Polinomios Ortogonales de s-Hermite")
 
 # KERNEL S-HERMITE:
 # ********************************************
@@ -82,32 +82,32 @@ def sHerm_kernel(X, degree=2):
 
 # SELECCIÓN DEL DATASET
 # *********************************************
-if analizarFourclass:
-    fourclass = np.loadtxt("fourclass1.csv", delimiter=",", skiprows=1)
-    X = fourclass[:, :2]
-    Y = fourclass[:, 2]
-    # PARÁMETROS ÓPTIMOS (Del artículo sobre Gegenbauer)
-    # *********************************************
-    C_rbf, gamma_rbf = 30.42, 3.82  # RBF    - Fourclass
-    C_sH, degree_sH = 25.20, 6  # s-Herm - Fourclass
-else:
-    X, Y = make_circles(100, factor=0.3, noise=0.1)
-    # PARÁMETROS DE PRUEBA
-    # *********************************************
-    C_rbf, gamma_rbf = 100, 0.1  # RBF     - Dataset X
-    C_sH, degree_sH = 100, 2  # s-Herm - Dataset X
+# if analizarFourclass:
+#     fourclass = np.loadtxt("fourclass1.csv", delimiter=",", skiprows=1)
+#     X = fourclass[:, :2]
+#     Y = fourclass[:, 2]
+#     # PARÁMETROS ÓPTIMOS (Del artículo sobre Gegenbauer)
+#     # *********************************************
+#     C_rbf, gamma_rbf = 30.42, 3.82  # RBF    - Fourclass
+#     C_sH, degree_sH = 25.20, 6  # s-Herm - Fourclass
+# else:
+#     X, Y = make_circles(100, factor=0.3, noise=0.1)
+#     # PARÁMETROS DE PRUEBA
+#     # *********************************************
+#     C_rbf, gamma_rbf = 100, 0.1  # RBF     - Dataset X
+#     C_sH, degree_sH = 100, 2  # s-Herm - Dataset X
 
-# VERIFICANDO MATRIZ GRAMIANA DE S-HERM
-# *********************************************
-X = np.array(X)
-if calcularGram:
-    X_gram = sHerm_kernel(X, degree=degree_sH)
-    print(X_gram)
-    print("\n****VERIFICANDO MATRIZ GRAM*****")
-    print(type(X_gram))
-    print("Gram Max =", X_gram.max(), "Gram min =", X_gram.min())
-    NANs = np.argwhere(np.isnan(X_gram))
-    print("Valores tipo NAN: ", NANs)
+# # VERIFICANDO MATRIZ GRAMIANA DE S-HERM
+# # *********************************************
+# X = np.array(X)
+# if calcularGram:
+#     X_gram = sHerm_kernel(X, degree=degree_sH)
+#     print(X_gram)
+#     print("\n****VERIFICANDO MATRIZ GRAM*****")
+#     print(type(X_gram))
+#     print("Gram Max =", X_gram.max(), "Gram min =", X_gram.min())
+#     NANs = np.argwhere(np.isnan(X_gram))
+#     print("Valores tipo NAN: ", NANs)
 
 # # ENTRENANDO Y GRAFICANDO MSV CON RBF y S-HERM.
 # plt.figure()
