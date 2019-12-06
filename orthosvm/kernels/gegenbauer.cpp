@@ -11,6 +11,6 @@ cfg['sources'] = ['src/gegenb.cpp']
 PYBIND11_MODULE(gegenbauer, m)
 {
     m.def("pochhammer", &pochhammer);
-    // m.def("gegenbauer", &gegenbauer);
+    m.def("gegenbauerc", &gegenbauerc);
     // m.def("kernel", &kernel);
 }

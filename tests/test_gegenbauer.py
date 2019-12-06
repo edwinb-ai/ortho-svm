@@ -9,7 +9,19 @@ pochhammer_values = [
     (0.0, 5, 0.0),
 ]
 
+gegenbauer_values = [
+    (5.0, 6, 2.0, 6702996.0),
+    (15.0, 7, 1.0, 21724469880.0),
+    (2.0, 0, 3.0, 1.0),
+    (3.0, 1, 2.0, 12.0),
+]
+
 
 @pytest.mark.parametrize("x, n, expected", pochhammer_values)
 def test_pochhammer(x, n, expected):
     assert gegenbauer.pochhammer(x, n) == expected
+
+
+@pytest.mark.parametrize("x, n, a, expected", gegenbauer_values)
+def test_gegenbauerc(x, n, a, expected):
+    assert gegenbauer.gegenbauerc(x, n, a) == expected
