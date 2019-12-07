@@ -14,7 +14,7 @@ from numba import njit
 
 # POLINOMIO HERMITE
 # *******************************************
-# @njit
+@njit
 def hermite(x, n):
 
     primer_valor = 1.0
