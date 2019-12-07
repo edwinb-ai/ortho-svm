@@ -55,8 +55,24 @@ double weights(double x, double y, double alfa)
 
 double u_scale(int k, double alfa)
 {
-    double term_1 = 1.0 / std::sqrt(k + 1.0);
+    double term_1 = 1.0 / std::sqrt(k + 1.0); // ? k is partial or absolute degree?
     double term_2 = pochhammer(2.0 * alfa, k) / pochhammer(1.0, k);
 
     return term_1 * term_2;
+}
+
+double kernel(double x, double y, double alfa, int degree)
+{
+    double sum_result = 0.0;
+    double mult_result = 1.0;
+
+    for (int k = 1; k <= degree; k++)
+    {
+        mult_result = gegenbauerc(x, k, alfa) * gegenbauerc(y, k, alfa);
+        mult_result *= weights(x, y, alfa);
+        mult_result *= std::pow(u_scale(k, alfa), 2.0);
+        sum_result += mult_result;
+    }
+
+    return sum_result;
 }
