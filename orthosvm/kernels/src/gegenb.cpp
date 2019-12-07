@@ -42,7 +42,7 @@ double gegenbauerc(double x, int degree, double alfa)
 double weights(double x, double y, double alfa)
 {
     // TODO: Add the case when alfa == -0.5 to evaluate Tchebyshev
-    
+
     if (-0.5 < alfa || alfa <= 0.5) return 1.0;
     if (alfa > 0.5)
     {
@@ -51,4 +51,12 @@ double weights(double x, double y, double alfa)
 
         return result;
     }
+}
+
+double u_scale(int k, double alfa)
+{
+    double term_1 = 1.0 / std::sqrt(k + 1.0);
+    double term_2 = pochhammer(2.0 * alfa, k) / pochhammer(1.0, k);
+
+    return term_1 * term_2;
 }
