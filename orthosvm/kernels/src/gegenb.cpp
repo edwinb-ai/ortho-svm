@@ -38,3 +38,17 @@ double gegenbauerc(double x, int degree, double alfa)
         return result;
     }
 }
+
+double weights(double x, double y, double alfa)
+{
+    // TODO: Add the case when alfa == -0.5 to evaluate Tchebyshev
+    
+    if (-0.5 < alfa || alfa <= 0.5) return 1.0;
+    if (alfa > 0.5)
+    {
+        double term_1 = (1.0 - (x * x)) * (1.0 - (y * y));
+        double result = std::pow(term_1, alfa - 0.5) + 0.1;
+
+        return result;
+    }
+}

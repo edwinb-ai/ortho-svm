@@ -12,5 +12,6 @@ PYBIND11_MODULE(gegenbauer, m)
 {
     m.def("pochhammer", &pochhammer);
     m.def("gegenbauerc", &gegenbauerc);
+    m.def("weights", &weights);
     // m.def("kernel", &kernel);
 }
