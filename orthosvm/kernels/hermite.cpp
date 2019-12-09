@@ -6,7 +6,7 @@ cfg['sources'] = ['src/herm.cpp']
 %>
 */
 #include <pybind11/pybind11.h>
-#include "src/hermite.h"
+#include "src/hermite.hpp"
 
 PYBIND11_MODULE(hermite, m)
 {

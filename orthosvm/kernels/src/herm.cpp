@@ -1,4 +1,4 @@
-#include "hermite.h"
+#include "hermite.hpp"
 
 double hermite(double x, int n)
 {
