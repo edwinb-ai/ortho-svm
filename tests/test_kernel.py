@@ -1,4 +1,4 @@
-from orthosvm.kernels.hermite import kernel
+from orthosvm.kernels import hermite, chebyshev
 from orthosvm.kernels.shermite import sHerm_kernel
 import numpy as np
 import pytest
@@ -7,14 +7,25 @@ import pytest
 # Import datasets and true results
 fourclass = np.loadtxt("tests/datasets/fourclass1.csv", delimiter=",", skiprows=1)
 X = fourclass[:, :2]
-true_grammian_fourclass = np.loadtxt(
+hermite_gramian_true = np.loadtxt(
     "tests/datasets/hermite_gramian_fourclass.csv", delimiter=",", skiprows=1
 )
+chebyshev_gramian_true = np.loadtxt(
+    "tests/datasets/chebyshev_gramian_fourclass.csv", delimiter=",", skiprows=1
+)
 # Strip the first column from the matrix
-true_gram_matrix = true_grammian_fourclass[..., 1:]
+hermite_true_matrix = hermite_gramian_true[..., 1:]
+chebyshev_true_matrix = chebyshev_gramian_true[..., 1:]
+
+# Create a list of values and expected ones
+expected_results = [
+    (chebyshev.kernel, chebyshev_true_matrix, 3),
+    (hermite.kernel, hermite_true_matrix, 6),
+]
 
 
-def test_kernel_cpp():
+@pytest.mark.parametrize("kernel, true_matrix, degree", expected_results)
+def test_kernel_cpp(kernel, true_matrix, degree):
     X_gram = np.zeros((X.shape[0], X.shape[0]))
     for l, x in enumerate(X):
         for m, z in enumerate(X):
@@ -26,7 +37,7 @@ def test_kernel_cpp():
             while i < x.size and j < z.size:
                 if i == j:
                     summ = 1.0
-                    summ += kernel(x[i], z[j], 6)
+                    summ += kernel(x[i], z[j], degree)
                     mult *= summ
                     i += 1
                     j += 1
@@ -39,10 +50,4 @@ def test_kernel_cpp():
         # Complete the matrix with upper triangular
         X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
 
-    assert pytest.approx(X_gram, rel=1e-1) == true_gram_matrix
-
-
-def test_shermite_kernel():
-    result = sHerm_kernel(X, degree=6)
-
-    assert pytest.approx(result, rel=1e-1) == true_gram_matrix
+    assert pytest.approx(X_gram, rel=1e-1) == true_matrix

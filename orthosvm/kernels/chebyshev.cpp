@@ -12,5 +12,5 @@ PYBIND11_MODULE(chebyshev, m)
 {
     m.def("chebyshev", &chebyshev);
 
-    // m.def("kernel", &kernel);
+    m.def("kernel", &kernel);
 }
