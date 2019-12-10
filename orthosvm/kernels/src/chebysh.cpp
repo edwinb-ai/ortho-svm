@@ -23,9 +23,9 @@ double chebyshev(double x, int n)
 
 double kernel(double x, double y, int degree)
 {
-    double sum_result = 1.0;
+    double sum_result = 0.0;
 
-    for (int k = 1; k < degree; k++)
+    for (int k = 0; k < degree; k++)
     {
         sum_result += chebyshev(x, k) * chebyshev(y, k);
     }

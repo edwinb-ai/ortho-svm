@@ -5,7 +5,7 @@ import pytest
 
 
 # Import datasets and true results
-fourclass = np.loadtxt("tests/datasets/fourclass1.csv", delimiter=",", skiprows=1)
+fourclass = np.loadtxt("tests/datasets/fourclass.csv", delimiter=",", skiprows=1)
 X = fourclass[:, :2]
 hermite_gramian_true = np.loadtxt(
     "tests/datasets/hermite_gramian_fourclass.csv", delimiter=",", skiprows=1
@@ -31,15 +31,15 @@ def test_kernel_cpp(kernel, true_matrix, degree):
 
     for l, x in enumerate(X):
         for m, z in enumerate(X):
-            summ, mult, i, j = 0.0, 1.0, 0, 0
+            summ, mult, i, j = 1.0, 1.0, 0, 0
             # Skip the upper triangular to avoid computing the same values twice
             if l > m:
                 continue
             # Computer hermite kernel for the grammian matrix
-            while i < x.size and j < z.size:
+            while i < len(x) and j < len(z):
                 if i == j:
-                    summ = 0.0
-                    summ += kernel(x[i], z[j], degree)
+                    # summ = 0.0
+                    summ = kernel(x[i], z[j], degree)
                     mult *= summ
                     i += 1
                     j += 1
@@ -54,6 +54,12 @@ def test_kernel_cpp(kernel, true_matrix, degree):
     X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
 
     matrix_difference = X_gram - true_matrix
-    print(np.where(matrix_difference.max() == matrix_difference))
+    print(np.where(matrix_difference.min() == matrix_difference))
+    print("Maximum difference")
+    print(X_gram[401, 847])
+    print(true_matrix[401, 847])
+    print("Minimum difference")
+    print(X_gram[236, 847])
+    print(true_matrix[236, 847])
 
     assert pytest.approx(X_gram, rel=1e-2) == true_matrix
