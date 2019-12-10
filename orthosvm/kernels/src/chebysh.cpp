@@ -23,12 +23,12 @@ double chebyshev(double x, int n)
 
 double kernel(double x, double y, int degree)
 {
-    double sum_result = 0.0;
+    double sum_result = 1.0;
 
-    for (int k = 1; k <= degree; k++)
+    for (int k = 1; k < degree; k++)
     {
         sum_result += chebyshev(x, k) * chebyshev(y, k);
     }
 
-    return sum_result / std::sqrt(1.005 - x * y);
+    return sum_result / std::sqrt(1.005 - (x * y));
 }
