@@ -7,20 +7,22 @@ import pytest
 # Import datasets and true results
 fourclass = np.loadtxt("tests/datasets/fourclass.csv", delimiter=",", skiprows=1)
 X = fourclass[:, :2]
-hermite_gramian_true = np.loadtxt(
-    "tests/datasets/hermite_gramian_fourclass.csv", delimiter=",", skiprows=1
-)
-chebyshev_gramian_true = np.loadtxt(
-    "tests/datasets/chebyshev_gramian_fourclass.csv", delimiter=",", skiprows=1
-)
-# Strip the first column from the matrix
-hermite_true_matrix = hermite_gramian_true[..., 1:]
-chebyshev_true_matrix = chebyshev_gramian_true[..., 1:]
+
+
+def load_and_strip(path):
+    dataset = np.loadtxt(path, delimiter=",", skiprows=1)
+    return dataset[..., 1:]
+
 
 # Create a list of values and expected ones
+common_path = "tests/datasets/"
 expected_results = [
-    (chebyshev.kernel, chebyshev_true_matrix, 3),
-    (hermite.kernel, hermite_true_matrix, 6),
+    (
+        chebyshev.kernel,
+        load_and_strip(common_path + "chebyshev_gramian_fourclass.csv"),
+        3,
+    ),
+    (hermite.kernel, load_and_strip(common_path + "hermite_gramian_fourclass.csv"), 6),
 ]
 
 
