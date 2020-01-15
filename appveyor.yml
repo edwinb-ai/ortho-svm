@@ -1,0 +1,22 @@
+platform:
+  - x64
+
+environment:
+  matrix:
+    - PYTHON: C:\Python37
+
+notifications:
+  - provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: false
+
+install:
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - pip install poetry
+  - git clone --depth=50 https://github.com/edwinb-ai/orthosvm.git edwinb-ai/orthosvm
+  - cd edwinb-ai/orthosvm
+  - poetry install
+
+build_script:
+  - poetry run pytest
