@@ -1,8 +1,7 @@
-from orthosvm.kernels import hermite, chebyshev
+from orthosvm.kernels import hermite, chebyshev, gegenbauer
 from orthosvm.kernels.shermite import sHerm_kernel
 import numpy as np
 import pytest
-from sklearn.metrics.pairwise import check_pairwise_arrays
 
 
 # Import datasets and true results
