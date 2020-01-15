@@ -23,7 +23,7 @@ double hermite(double x, int n)
 
 double kernel(double x, double y, int degree)
 {
-    double sum_result = 0.0;
+    double sum_result = 1.0;
 
     for (int k = 1; k <= degree; k++)
     {
