@@ -2,6 +2,7 @@ from orthosvm.kernels import hermite, chebyshev
 from orthosvm.kernels.shermite import sHerm_kernel
 import numpy as np
 import pytest
+from sklearn.metrics.pairwise import check_pairwise_arrays
 
 
 # Import datasets and true results
@@ -31,26 +32,15 @@ def test_kernel_cpp(kernel, true_matrix, degree):
 
     for l, x in enumerate(X):
         for m, z in enumerate(X):
-            summ, mult, i, j = 1.0, 1.0, 0, 0
-            # Skip the upper triangular to avoid computing the same values twice
-            if l > m:
-                continue
-            # Computer hermite kernel for the grammian matrix
-            while i < len(x) and j < len(z):
-                if i == j:
-                    summ = kernel(x[i], z[j], degree)
-                    mult *= summ
-                    i += 1
-                    j += 1
-                else:
-                    if i > j:
-                        j += 1
-                    else:
-                        i += 1
-            X_gram[l, m] = mult
-
-    # Complete the matrix with upper triangular
-    X_gram = np.triu(X_gram) + np.triu(X_gram, 1).T
+            summ, mult = 1.0, 1.0
+            for i, k in zip(x, z):
+                summ = 1.0
+                if i != 0.0 and k != 0.0:
+                    summ = kernel(i, k, degree)
+                mult *= summ
+            X_gram[l, m] = X_gram[m, l] = mult
+            if m > l:
+                break
 
     matrix_difference = X_gram - true_matrix
     print(np.where(matrix_difference.min() == matrix_difference))
@@ -61,4 +51,4 @@ def test_kernel_cpp(kernel, true_matrix, degree):
     print(X_gram[236, 847])
     print(true_matrix[236, 847])
 
-    assert pytest.approx(X_gram, rel=1e-1) == true_matrix
+    assert pytest.approx(X_gram == true_matrix, rel=1e-15)
