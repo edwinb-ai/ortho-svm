@@ -61,7 +61,7 @@ double u_scale(int k, double alfa)
     return term_1 * term_2;
 }
 
-double kernel(double x, double y, double alfa, int degree)
+double kernel(double x, double y, int degree, double alfa)
 {
     double sum_result = 0.0;
     double mult_result = 1.0;
