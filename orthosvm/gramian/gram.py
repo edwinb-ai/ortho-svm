@@ -12,3 +12,6 @@ class Gram:
 
     def _check_arrays(self):
         self.x, self.y = check_X_y(self.x, self.y)
+
+    def kernel(self):
+        pass
