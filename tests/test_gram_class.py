@@ -1,7 +1,6 @@
 from orthosvm.gramian import gram
 import numpy as np
 import pytest
-from orthosvm.gramian import compute_gram_matrix
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 
