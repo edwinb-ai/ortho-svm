@@ -1,5 +1,4 @@
 from orthosvm.kernels import hermite, chebyshev, gegenbauer
-from orthosvm.kernels.shermite import sHerm_kernel
 import numpy as np
 import pytest
 
