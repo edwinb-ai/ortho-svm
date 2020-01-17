@@ -21,6 +21,10 @@ install:
   - conda info -a
   - conda env create -f conda_env.yml
   - conda activate svm
+  - pip install pytest-cov codecov
 notifications:
   email: false
-script: pytest
+script:
+  - pytest --cov=./
+after_success:
+  - codecov
