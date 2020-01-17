@@ -1,5 +1,5 @@
 import pytest
-from .hermite_impls import hermite_recurrence, hermite_expr, hermite_iterative
+from tests.hermite_impls import hermite_recurrence, hermite_expr, hermite_iterative
 from orthosvm.kernels import hermite
 from time import time
 from orthosvm.gramian.gram import give_kernel
