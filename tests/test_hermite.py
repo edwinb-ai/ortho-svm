@@ -2,6 +2,7 @@ import pytest
 from .hermite_impls import hermite_recurrence, hermite_expr, hermite_iterative
 from orthosvm.kernels import hermite
 from time import time
+from orthosvm.gramian.gram import give_kernel
 
 
 vals_list = [(5.0, 0, 1.0), (5.0, 1, 5.0), (5.0, 2, 24.0), (5.0, 3, 110.0)]
@@ -63,3 +64,11 @@ def test_time_cpp_iterative(x, n):
     stop = time()
 
     print("Time elapsed, C++: {}".format(stop - start))
+
+
+def test_hermite_from_callable():
+    x = 5.0
+    n = 6
+    computed_value = give_kernel(x, x, degree=n, kernel="hermite")
+    expected_result = hermite.kernel(x, x, n)
+    assert computed_value == expected_result
