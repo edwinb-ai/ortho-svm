@@ -34,10 +34,7 @@ def iterate_over_arrays(X, y, params):
 def gram_matrix(**kwargs):
     def compute_gram_matrix(X, y=None):
         X, y = check_pairwise_arrays(X, y)
-        if y is not None:
-            X_gram = iterate_over_arrays(X, y, kwargs)
-        else:
-            X_gram = iterate_over_arrays(X, X, kwargs)
+        X_gram = iterate_over_arrays(X, y, kwargs)
 
         return X_gram
 
