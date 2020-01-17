@@ -18,19 +18,27 @@ y = fourclass[:, 2]
 common_path = "tests/datasets/"
 expected_results = load_and_strip(common_path + "hermite_gramian_fourclass.csv")
 
-gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
 
-
-def test_gram_object_attributes():
+def test_gram_callable_from_callable():
+    gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
     assert pytest.approx(gram_matrix(X) == expected_results, rel=1e-15)
 
 
+def test_gram_matrix_callable():
+    params = dict(kernel="hermite", degree=6)
+    assert pytest.approx(
+        gram.iterate_over_arrays(X, X, params) == expected_results, rel=1e-15
+    )
+
+
+@pytest.mark.xfail
 def test_sklearn_integration():
+    gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
     params = {"C": 25.20, "kernel": gram_matrix}
     svc = SVC(**params)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     svc.fit(X_train, y_train)
     accuracy = svc.score(X_test, y_test)
-    print(type(accuracy))
+    print(accuracy)
 
     assert 0.81 == pytest.approx(accuracy, abs=1e-2)

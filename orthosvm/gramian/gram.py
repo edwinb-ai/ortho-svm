@@ -15,10 +15,10 @@ def iterate_over_arrays(X, y, params):
     for l, x in enumerate(X):
         for m, z in enumerate(y):
             summ, mult = 1.0, 1.0
-            for i in range(len(x)):
+            for i, k in zip(x, z):
                 summ = 1.0
-                if x[i] != 0.0 and z[i] != 0.0:
-                    summ = give_kernel(x[i], z[i], **params)
+                if i != 0.0 and k != 0.0:
+                    summ = give_kernel(i, k, **params)
                 mult *= summ
                 # * The matrix will be symmetric
                 if X is y:
