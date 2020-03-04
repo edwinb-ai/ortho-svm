@@ -2,6 +2,9 @@
 
 double chebyshev(double x, int n)
 {
+//  Compute the n-th Hermite polynomial evaluated at x using the
+//  very robust 3-term recursion formula.
+
     if (n == 0) return 1.0;
     else if (n == 1) return x;
     else
@@ -23,6 +26,9 @@ double chebyshev(double x, int n)
 
 double kernel(double x, double y, int degree)
 {
+//  Compute the n-th degree Hermite Mercer kernel defined
+//  as a product of Hermite polynomials evaluated at x and y.
+
     double sum_result = 0.0;
 
     for (int k = 0; k < degree; k++)
@@ -30,5 +36,6 @@ double kernel(double x, double y, int degree)
         sum_result += chebyshev(x, k) * chebyshev(y, k);
     }
 
+//  Avoid the explosion effect by adding a small offset (0.005)
     return sum_result / std::sqrt(1.005 - (x * y));
 }

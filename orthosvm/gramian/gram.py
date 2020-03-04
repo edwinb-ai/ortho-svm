@@ -10,9 +10,9 @@ def give_kernel(x, z, **kwargs):
         return gegenbauer.kernel(x, z, kwargs["degree"], kwargs["alpha"])
 
 
-def iterate_over_arrays(X, y, params):
-    X_gram = np.zeros((X.shape[0], y.shape[0]))
-    for l, x in enumerate(X):
+def iterate_over_arrays(xdata, y, params):
+    xgram = np.zeros((xdata.shape[0], y.shape[0]))
+    for j, x in enumerate(xdata):
         for m, z in enumerate(y):
             summ, mult = 1.0, 1.0
             for i, k in zip(x, z):
@@ -21,21 +21,21 @@ def iterate_over_arrays(X, y, params):
                     summ = give_kernel(i, k, **params)
                 mult *= summ
                 # * The matrix will be symmetric
-                if X is y:
-                    X_gram[l, m] = X_gram[m, l] = mult
-                    if m > l:
+                if xdata is y:
+                    xgram[j, m] = xgram[m, j] = mult
+                    if m > j:
                         break
                 # * The matrix won't be symmetric
                 else:
-                    X_gram[l, m] = mult
-    return X_gram
+                    xgram[j, m] = mult
+    return xgram
 
 
 def gram_matrix(**kwargs):
-    def compute_gram_matrix(X, y=None):
-        X, y = check_pairwise_arrays(X, y)
-        X_gram = iterate_over_arrays(X, y, kwargs)
+    def compute_gram_matrix(xdata, y=None):
+        xdata, y = check_pairwise_arrays(xdata, y)
+        xgram = iterate_over_arrays(xdata, y, kwargs)
 
-        return X_gram
+        return xgram
 
     return compute_gram_matrix

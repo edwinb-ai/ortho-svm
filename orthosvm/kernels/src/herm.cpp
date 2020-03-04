@@ -2,6 +2,10 @@
 
 double hermite(double x, int n)
 {
+//    Compute the n-th Hermite polynomial evaluated at x using the
+//    very robust 3-term recursion formula.
+
+    // Base cases, when n is 0 and 1
     if (n == 0) return 1.0;
     else if (n == 1) return x;
     else
@@ -23,13 +27,17 @@ double hermite(double x, int n)
 
 double kernel(double x, double y, int degree)
 {
+//    Compute the n-th degree Hermite Mercer kernel defined
+//    as a product of Hermite polynomials evaluated at x and y.
+
     double sum_result = 1.0;
 
     for (int k = 1; k <= degree; k++)
     {
-        sum_result += hermite(x, k) * hermite(y, k) / std::pow(2.0, 2.0 * degree);
+        sum_result += hermite(x, k) * hermite(y, k);
     }
 
-    return sum_result;
+//    The kernel is normalized by a factor of 2^(2n) to avoid the explosion effect
+    return sum_result / std::pow(2.0, 2.0 * degree);
 
 }

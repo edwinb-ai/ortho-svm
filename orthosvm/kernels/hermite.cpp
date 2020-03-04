@@ -10,7 +10,28 @@ cfg['sources'] = ['src/herm.cpp']
 
 PYBIND11_MODULE(hermite, m)
 {
-    m.def("hermite", &hermite);
+    m.def("hermite", &hermite, R"pbdoc(
+        Compute the n-th Hermite polynomial evaluated at x using the
+        very robust 3-term recursion formula.
 
-    m.def("kernel", &kernel);
+        Args:
+            x (double): The value where the polynomial will be evaluated.
+            n (int): The degree of the Hermite polynomial.
+
+        Returns:
+            double: Evaluation of x using an `n`-th degree Hermite polynomial.
+    )pbdoc");
+
+    m.def("kernel", &kernel, R"pbdoc(
+        Compute the n-th degree Hermite Mercer kernel defined
+        as a product of Hermite polynomials evaluated at x and y.
+
+        Args:
+            x (double): The value where the first polynomial will be evaluated.
+            y (double): The value where the second polynomial will be evaluated.
+            degree (int): The degree of the Hermite polynomials.
+
+        Returns:
+            double: Computation of the Hermite Mercer kernel.
+    )pbdoc");
 }
