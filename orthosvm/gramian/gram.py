@@ -1,13 +1,46 @@
 import numpy as np
 from sklearn.metrics.pairwise import check_pairwise_arrays
-from orthosvm.kernels import hermite, gegenbauer
+from orthosvm.kernels import hermite, gegenbauer, chebyshev
 
 
-def give_kernel(x, z, **kwargs):
-    if kwargs["kernel"] == "hermite":
-        return hermite.kernel(x, z, kwargs["degree"])
-    if kwargs["kernel"] == "gegenbauer":
-        return gegenbauer.kernel(x, z, kwargs["degree"], kwargs["alpha"])
+def give_kernel(x: float, z: float, **kwargs):
+    """Compute a specific Mercer kernel for `x` and `z`.
+
+    Using the keyword arguments one can specify the type of kernel,
+    the degree and the special parameters, if any. This will return
+    the evaluation of the Mercer kernel for `x` and `z`.
+
+    Args:
+        x (float): First value to evaluate the kernel.
+        z (float): Second value to evaluate the kernel.
+        **kwargs: The following keyword arguments are expected:
+            kernel (str): One of "hermite", "chebyshev" or "gegenbauer".
+            degree (int): Degree of the different polynomials.
+            alpha (float): This is only useful for the "gegenbauer" kernel.
+
+    Returns:
+        float: The evaluation of the kernel with the given parameters.
+    """
+    # Split the variables for easier handling
+    kernel = kwargs["kernel"]
+    degree = kwargs["degree"]
+
+    if kernel == "hermite":
+        return hermite.kernel(x, z, degree)
+
+    if kernel == "gegenbauer":
+        alpha = kwargs["alpha"]
+        
+        # When alfa is 0 use the Chebyshev polynomials definition
+        # because the Gegenbauer will always reduce to 0.0
+        if alpha == 0.0:
+            return chebyshev.kernel(x, z, degree)
+        else:
+            # Every other case can be handled by the general formulation
+            return gegenbauer.kernel(x, z, degree, alpha)
+
+    if kernel == "chebyshev":
+        return chebyshev.kernel(x, z, degree)
 
 
 def iterate_over_arrays(xdata, y, params):

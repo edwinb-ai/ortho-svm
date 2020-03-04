@@ -2,7 +2,7 @@
 
 double chebyshev(double x, int n)
 {
-//  Compute the n-th Hermite polynomial evaluated at x using the
+//  Compute the n-th Chebyshev polynomial evaluated at x using the
 //  very robust 3-term recursion formula.
 
     if (n == 0) return 1.0;
@@ -13,7 +13,7 @@ double chebyshev(double x, int n)
         double second_value = x;
         double result = 0.0;
 
-        for (int i = 1; i < n; i++)
+        for (int i = 2; i <= n; i++)
         {
             result = 2.0 * x * second_value - first_value;
             first_value = second_value;
@@ -26,8 +26,8 @@ double chebyshev(double x, int n)
 
 double kernel(double x, double y, int degree)
 {
-//  Compute the n-th degree Hermite Mercer kernel defined
-//  as a product of Hermite polynomials evaluated at x and y.
+//  Compute the n-th degree Chebyshev Mercer kernel defined
+//  as a product of Chebyshev polynomials evaluated at x and y.
 
     double sum_result = 0.0;
 

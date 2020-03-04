@@ -1,7 +1,6 @@
 from scipy.special import eval_chebyt
 import pytest
 from orthosvm.kernels import chebyshev
-import numpy as np
 
 
 some_value = 0.5
