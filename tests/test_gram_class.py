@@ -42,7 +42,7 @@ def test_sklearn_integration_hermite():
 
     assert 0.81 == pytest.approx(accuracy, abs=1e-2)
 
-@pytest.mark.xfail
+
 def test_sklearn_integration_gegenbauer():
     gram_matrix = gram.gram_matrix(kernel="gegenbauer", degree=6, alpha=-0.42)
     params = {"C": 25.20, "kernel": gram_matrix}
@@ -52,4 +52,4 @@ def test_sklearn_integration_gegenbauer():
     accuracy = svc.score(X_test, y_test)
     print(accuracy)
 
-    assert 0.99 == pytest.approx(accuracy, abs=1e-2)
+    assert 0.99 == pytest.approx(accuracy, rel=1e-2)

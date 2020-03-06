@@ -63,7 +63,7 @@ double weights(double x, double y, double alfa)
     {
         double term_1 = (1.0 - (x * x)) * (1.0 - (y * y));
         // We need to add an offset (0.1) to avoid the annihilation effect
-        result = std::pow(term_1, alfa - 0.5) + 0.1;
+        result = std::pow(term_1, alfa) + 0.1;
     }
     return result;
 }
