@@ -52,26 +52,30 @@ double weights(double x, double y, double alfa)
 //  This computes the weight function (measure) for the Gegenbauer polynomial
 //  with special paramter alfa
 
+    double result = 0.0;
+
 //  A value between -0.5 and 0.5 is unity
-    if (-0.5 < alfa || alfa <= 0.5) return 1.0;
+    if (alfa <= 0.5)
+    {
+        result = 1.0;
+    }
     if (alfa > 0.5)
     {
         double term_1 = (1.0 - (x * x)) * (1.0 - (y * y));
-        // We need to add an offset (0.1) to avoid the annhilation effect
-        double result = std::pow(term_1, alfa - 0.5) + 0.1;
-
-        return result;
+        // We need to add an offset (0.1) to avoid the annihilation effect
+        result = std::pow(term_1, alfa - 0.5) + 0.1;
     }
+    return result;
 }
 
 double u_scale(int k, double alfa)
 {
 //  Use the Pochhammer symbol to re-scale the Gegenbauer polynomials of degree `k`
 //  and special parameter alfa
-    double term_1 = 1.0 / std::sqrt(k + 1.0); // ? k is partial or absolute degree?
-    double term_2 = pochhammer(2.0 * alfa, k) / pochhammer(1.0, k);
+    double term_1 = 1.0 / (k + 1.0); // ? k is partial or absolute degree?
+    double term_2 = pochhammer(2.0 * alfa + 1.0, k) / pochhammer(1.0, k);
 
-    return term_1 * term_2;
+    return term_1 * term_2 * term_2;
 }
 
 double kernel(double x, double y, int degree, double alfa)
@@ -79,14 +83,14 @@ double kernel(double x, double y, int degree, double alfa)
 //  Compute the n-th degree Gegenbauer Mercer kernel, with special parameter alfa,
 //  defined as a product of Gegenbauer polynomials evaluated at x and y.
 
-    double sum_result = 0.0;
+    double sum_result = 1.0;
     double mult_result = 1.0;
 
     for (int k = 1; k <= degree; k++)
     {
         mult_result = gegenbauerc(x, k, alfa) * gegenbauerc(y, k, alfa);
         mult_result *= weights(x, y, alfa);
-        mult_result *= std::pow(u_scale(k, alfa), 2.0);
+        mult_result /= u_scale(k, alfa);
         sum_result += mult_result;
     }
 

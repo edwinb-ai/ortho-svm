@@ -10,7 +10,6 @@ dependencies:
   - pytest
   - pip
   - pip:
-      - black
       - cppimport
       - pybind11
       - pylint

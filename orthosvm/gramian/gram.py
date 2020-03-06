@@ -64,15 +64,12 @@ def iterate_over_arrays(xdata: np.array, y: np.array, params: dict) -> np.array:
     """
     # Pre-allocate space for the Grammian matrix
     xgram = np.zeros((xdata.shape[0], y.shape[0]))
-    # Create allocating variables to hold multiplication and sum values
-    summ: float = 1.0
-    mult: float = 1.0
 
     # Loop over the indices and elements, both are required
     for j, x in enumerate(xdata):
         for m, z in enumerate(y):
             # Reset the variables
-            summ = 1.0
+            summ = 0.0
             mult = 1.0
             # Loop over the elements in both xdata and y
             for i, k in zip(x, z):
@@ -84,6 +81,8 @@ def iterate_over_arrays(xdata: np.array, y: np.array, params: dict) -> np.array:
                 # the matrix is symmetric
                 if xdata is y:
                     xgram[j, m] = xgram[m, j] = mult
+                    if m > j:
+                        break
                 # This handles the case when we are in the prediction stage,
                 # the matrix is not symmetric
                 else:
@@ -100,7 +99,7 @@ def gram_matrix(**kwargs) -> Callable:
     then it can use it in both the training and prediction stages.
 
     Args:
-        **kwargs (dict): These are special parameters required by the custom kernels,
+        **kwargs: These are special parameters required by the custom kernels,
             e.g. the alpha parameter for the Gegenbauer kernel. This is valid syntax
             for the scikit-learn API as well.
     

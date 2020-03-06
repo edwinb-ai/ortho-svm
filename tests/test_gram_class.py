@@ -31,9 +31,9 @@ def test_gram_matrix_callable():
 
 
 @pytest.mark.xfail
-def test_sklearn_integration():
+def test_sklearn_integration_hermite():
     gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
-    params = {"C": 25.20, "kernel": gram_matrix}
+    params = {"C": 31.52, "kernel": gram_matrix}
     svc = SVC(**params)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     svc.fit(X_train, y_train)
@@ -41,3 +41,15 @@ def test_sklearn_integration():
     print(accuracy)
 
     assert 0.81 == pytest.approx(accuracy, abs=1e-2)
+
+@pytest.mark.xfail
+def test_sklearn_integration_gegenbauer():
+    gram_matrix = gram.gram_matrix(kernel="gegenbauer", degree=6, alpha=-0.42)
+    params = {"C": 25.20, "kernel": gram_matrix}
+    svc = SVC(**params)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    svc.fit(X_train, y_train)
+    accuracy = svc.score(X_test, y_test)
+    print(accuracy)
+
+    assert 0.99 == pytest.approx(accuracy, abs=1e-2)
