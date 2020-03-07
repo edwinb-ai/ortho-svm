@@ -73,7 +73,7 @@ double u_scale(int k, double alfa)
 //  Use the Pochhammer symbol to re-scale the Gegenbauer polynomials of degree `k`
 //  and special parameter alfa
     double term_1 = 1.0 / (k + 1.0); // ? k is partial or absolute degree?
-    double term_2 = pochhammer(2.0 * alfa + 1.0, k) / pochhammer(1.0, k);
+    double term_2 = pochhammer(2.0 * alfa, k) / pochhammer(1.0, k);
 
     return term_1 * term_2 * term_2;
 }
@@ -88,10 +88,13 @@ double kernel(double x, double y, int degree, double alfa)
 
     for (int k = 1; k <= degree; k++)
     {
-        mult_result = gegenbauerc(x, k, alfa) * gegenbauerc(y, k, alfa);
-        mult_result *= weights(x, y, alfa);
-        mult_result /= u_scale(k, alfa);
-        sum_result += mult_result;
+        if (x != 0.0 and y != 0.0)
+        {
+            mult_result = gegenbauerc(x, k, alfa) * gegenbauerc(y, k, alfa);
+            mult_result *= weights(x, y, alfa);
+            mult_result /= u_scale(k, alfa);
+            sum_result += mult_result;
+        }
     }
 
     return sum_result;

@@ -29,11 +29,12 @@ double kernel(double x, double y, int degree)
 //  Compute the n-th degree Chebyshev Mercer kernel defined
 //  as a product of Chebyshev polynomials evaluated at x and y.
 
-    double sum_result = 0.0;
+    double sum_result = 1.0;
 
-    for (int k = 0; k < degree; k++)
+    for (int k = 1; k <= degree; k++)
     {
-        sum_result += chebyshev(x, k) * chebyshev(y, k);
+        if (x != 0.0 and y != 0.0)
+            sum_result += chebyshev(x, k) * chebyshev(y, k);
     }
 
 //  Avoid the explosion effect by adding a small offset (0.005)

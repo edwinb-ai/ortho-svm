@@ -2,7 +2,6 @@ from orthosvm.kernels import hermite, chebyshev, gegenbauer
 import numpy as np
 import pytest
 
-
 # Import datasets and true results
 fourclass = np.loadtxt("tests/datasets/fourclass.csv", delimiter=",", skiprows=1)
 X = fourclass[:, :2]
@@ -27,16 +26,13 @@ expected_results = [
 
 @pytest.mark.parametrize("kernel, true_matrix, degree", expected_results)
 def test_kernel_cpp(kernel, true_matrix, degree):
-
     X_gram = np.zeros((X.shape[0], X.shape[0]))
 
     for l, x in enumerate(X):
         for m, z in enumerate(X):
             summ, mult = 1.0, 1.0
             for i, k in zip(x, z):
-                summ = 1.0
-                if i != 0.0 and k != 0.0:
-                    summ = kernel(i, k, degree)
+                summ = kernel(i, k, degree)
                 mult *= summ
             X_gram[l, m] = X_gram[m, l] = mult
             if m > l:
@@ -67,16 +63,13 @@ expected_results = [
 
 @pytest.mark.parametrize("kernel, true_matrix, degree, alfa", expected_results)
 def test_kernel_ggb(kernel, true_matrix, degree, alfa):
-
     X_gram = np.zeros((X.shape[0], X.shape[0]))
 
     for l, x in enumerate(X):
         for m, z in enumerate(X):
-            summ, mult = 1.0, 1.0
+            summ, mult = 0.0, 1.0
             for i, k in zip(x, z):
-                summ = 1.0
-                if i != 0.0 and k != 0.0:
-                    summ = kernel(i, k, degree, alfa)
+                summ = kernel(i, k, degree, alfa)
                 mult *= summ
             X_gram[l, m] = X_gram[m, l] = mult
             if m > l:

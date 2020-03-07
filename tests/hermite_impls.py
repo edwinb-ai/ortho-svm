@@ -67,4 +67,3 @@ def hermite_expr(x: float, n: int) -> float:
         result += j * x ** i
 
     return result
-

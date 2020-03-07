@@ -11,3 +11,5 @@ misc/
 dist/
 .idea/
 *egg*
+noxfile.py
+.nox/

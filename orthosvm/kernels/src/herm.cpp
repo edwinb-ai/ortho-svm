@@ -36,7 +36,8 @@ double kernel(double x, double y, int degree)
 
     for (int k = 1; k <= degree; k++)
     {
-        sum_result += hermite(x, k) * hermite(y, k) / power_degree;
+        if (x != 0.0 and y != 0.0)
+            sum_result += hermite(x, k) * hermite(y, k) / power_degree;
     }
 
 //    The kernel is normalized by a factor of 2^(2n) to avoid the explosion effect

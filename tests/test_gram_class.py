@@ -20,19 +20,19 @@ expected_results = load_and_strip(common_path + "hermite_gramian_fourclass.csv")
 
 def test_gram_callable_from_callable():
     gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
-    assert pytest.approx(gram_matrix(X) == expected_results, rel=1e-15)
+    result = np.allclose(gram_matrix(X), expected_results)
+    assert result
 
 
 def test_gram_matrix_callable():
     params = dict(kernel="hermite", degree=6)
-    assert pytest.approx(
-        gram.iterate_over_arrays(X, X, params) == expected_results, rel=1e-15
-    )
+    result = np.allclose(gram.iterate_over_arrays(X, X, params), expected_results)
+    assert pytest.approx(result, rel=1e-15)
 
 
 def test_sklearn_integration_hermite():
     gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
-    params = {"C": 25.20, "kernel": gram_matrix}
+    params = {"C": 25.2, "kernel": gram_matrix}
     svc = SVC(**params)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     svc.fit(X_train, y_train)
@@ -44,11 +44,11 @@ def test_sklearn_integration_hermite():
 
 def test_sklearn_integration_gegenbauer():
     gram_matrix = gram.gram_matrix(kernel="gegenbauer", degree=6, alpha=-0.42)
-    params = {"C": 25.20, "kernel": gram_matrix}
+    params = {"C": 31.52, "kernel": gram_matrix}
     svc = SVC(**params)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     svc.fit(X_train, y_train)
     accuracy = svc.score(X_test, y_test)
     print(accuracy)
 
-    assert 0.99 == pytest.approx(accuracy, rel=1e-2)
+    assert 0.99 == pytest.approx(accuracy, rel=1e-1)

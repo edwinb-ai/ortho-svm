@@ -63,30 +63,30 @@ def iterate_over_arrays(xdata: np.array, y: np.array, params: dict) -> np.array:
         np.array -- An array containing the Grammian matrix.
     """
     # Pre-allocate space for the Grammian matrix
+    # xdata, y = check_pairwise_arrays(xdata, y)
     xgram = np.zeros((xdata.shape[0], y.shape[0]))
 
     # Loop over the indices and elements, both are required
     for j, x in enumerate(xdata):
         for m, z in enumerate(y):
             # Reset the variables
-            summ = 0.0
+            # summ = 1.0
             mult = 1.0
             # Loop over the elements in both xdata and y
             for i, k in zip(x, z):
                 # When the matrices are not sparse, compute the required kernel
-                if i != 0.0 and k != 0.0:
-                    summ = give_kernel(i, k, **params)
+                summ = give_kernel(i, k, **params)
                 mult *= summ
-                # If this is the case, where are in the training stage,
-                # the matrix is symmetric
-                if xdata is y:
-                    xgram[j, m] = xgram[m, j] = mult
-                    if m > j:
-                        break
-                # This handles the case when we are in the prediction stage,
-                # the matrix is not symmetric
-                else:
-                    xgram[j, m] = mult
+            # If this is the case, where are in the training stage,
+            # the matrix is symmetric
+            if xdata is y:
+                xgram[j, m] = xgram[m, j] = mult
+                if m > j:
+                    break
+            # This handles the case when we are in the prediction stage,
+            # the matrix is not symmetric
+            else:
+                xgram[j, m] = mult
 
     return xgram
 
@@ -106,6 +106,7 @@ def gram_matrix(**kwargs) -> Callable:
     Returns:
         Callable: The function that computes the Grammian matrix.
     """
+
     # The labels are actually not required, so we always set the as Optional
     def compute_gram_matrix(xdata: np.array, y: Optional[np.array] = None) -> np.array:
         # This makes it so that both arrays are copies of each other, for consistency
