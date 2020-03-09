@@ -18,7 +18,7 @@ gegenbauer_values = [
     (3.0, 1, 2.0, 12.0),
 ]
 
-weights_values = [(1.0, 1.0, -0.4, 1.0), (1.0, 1.0, 0.5, 1.0)]
+weights_values = [(1.0, 1.0, -0.4, 1.0), (1.0, 1.0, 0.0, 1.0)]
 
 
 @pytest.mark.parametrize("x, n, expected", pochhammer_values)
@@ -36,7 +36,7 @@ def test_gegenbauer_from_callable():
     n = 6
     a = -0.3
     computed_value = give_kernel(x, x, degree=n, alpha=a, kernel="gegenbauer")
-    expected_result = gegenbauer.kernel(x, x, n, a)
+    expected_result = gegenbauer.kernel(x, x, n, a - 0.5)
     assert computed_value == expected_result
 
 

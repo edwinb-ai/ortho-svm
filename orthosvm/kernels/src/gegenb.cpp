@@ -2,13 +2,15 @@
 
 double pochhammer(double x, int n)
 {
-//  Compute the Pochhammer symbol (x)_n for rising factorials
-//  using the Gamma function like so:
-//  (x)_n = x(x+1)(x+2)...(x+n-1)
+    //  Compute the Pochhammer symbol (x)_n for rising factorials
+    //  using the Gamma function like so:
+    //  (x)_n = x(x+1)(x+2)...(x+n-1)
 
     // Special values for the Pochhammer symbol
-    if (n == 0) return 1.0;
-    else if (n < 0 || x == 0) return 0.0;
+    if (n == 0)
+        return 1.0;
+    else if (n < 0 || x == 0)
+        return 0.0;
 
     double result = 1.0;
 
@@ -22,12 +24,14 @@ double pochhammer(double x, int n)
 
 double gegenbauerc(double x, int degree, double alfa)
 {
-//  Compute the Gegenbauer polynomials of degree `degree` and special parameter
-//  alfa using the 3-term recurrence relation
+    //  Compute the Gegenbauer polynomials of degree `degree` and special parameter
+    //  alfa using the 3-term recurrence relation
 
-//  Compute the special values, base cases
-    if (degree == 0) return 1.0;
-    else if (degree == 1) return 2.0 * alfa * x;
+    //  Compute the special values, base cases
+    if (degree == 0)
+        return 1.0;
+    else if (degree == 1)
+        return 2.0 * alfa * x;
     else
     {
         double first_value = 1.0;
@@ -49,13 +53,13 @@ double gegenbauerc(double x, int degree, double alfa)
 
 double weights(double x, double y, double alfa)
 {
-//  This computes the weight function (measure) for the Gegenbauer polynomial
-//  with special paramter alfa
+    //  This computes the weight function (measure) for the Gegenbauer polynomial
+    //  with special paramter alfa
 
     double result = 0.0;
 
-//  A value between -0.5 and 0.5 is unity
-    if (alfa <= 0.5)
+    //  A value between -0.5 and 0.5 is unity
+    if (alfa <= 0.0)
     {
         result = 1.0;
     }
@@ -63,16 +67,16 @@ double weights(double x, double y, double alfa)
     {
         double term_1 = (1.0 - (x * x)) * (1.0 - (y * y));
         // We need to add an offset (0.1) to avoid the annihilation effect
-        result = std::pow(term_1, alfa) + 0.1;
+        result = std::pow(term_1, alfa - 0.5) + 0.1;
     }
     return result;
 }
 
 double u_scale(int k, double alfa)
 {
-//  Use the Pochhammer symbol to re-scale the Gegenbauer polynomials of degree `k`
-//  and special parameter alfa
-    double term_1 = 1.0 / (k + 1.0); // ? k is partial or absolute degree?
+    //  Use the Pochhammer symbol to re-scale the Gegenbauer polynomials of degree `k`
+    //  and special parameter alfa
+    double term_1 = 1.0 / (k + 1.0);
     double term_2 = pochhammer(2.0 * alfa, k) / pochhammer(1.0, k);
 
     return term_1 * term_2 * term_2;
@@ -80,8 +84,8 @@ double u_scale(int k, double alfa)
 
 double kernel(double x, double y, int degree, double alfa)
 {
-//  Compute the n-th degree Gegenbauer Mercer kernel, with special parameter alfa,
-//  defined as a product of Gegenbauer polynomials evaluated at x and y.
+    //  Compute the n-th degree Gegenbauer Mercer kernel, with special parameter alfa,
+    //  defined as a product of Gegenbauer polynomials evaluated at x and y.
 
     double sum_result = 1.0;
     double mult_result = 1.0;

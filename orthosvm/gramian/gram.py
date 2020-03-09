@@ -30,7 +30,8 @@ def give_kernel(x: float, z: float, **kwargs) -> float:
         return hermite.kernel(x, z, degree)
 
     if kernel == "gegenbauer":
-        alpha = kwargs["alpha"]
+        # Shift alpha by -0.5
+        alpha = kwargs["alpha"] - 0.5
 
         # When alfa is 0 use the Chebyshev polynomials definition
         # because the Gegenbauer will always reduce to 0.0
