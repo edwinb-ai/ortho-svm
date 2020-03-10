@@ -2,7 +2,7 @@ from orthosvm.gramian import gram
 import numpy as np
 import pytest
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 
 
 def load_and_strip(path):
@@ -34,7 +34,11 @@ def test_sklearn_integration_hermite():
     gram_matrix = gram.gram_matrix(kernel="hermite", degree=6)
     params = {"C": 25.2, "kernel": gram_matrix}
     svc = SVC(**params)
+    print(X.shape)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    skf = StratifiedKFold(n_splits=10)
+    for train, test in skf.split(X, y):
+        print(X[train].shape)
     svc.fit(X_train, y_train)
     accuracy = svc.score(X_test, y_test)
     print(accuracy)

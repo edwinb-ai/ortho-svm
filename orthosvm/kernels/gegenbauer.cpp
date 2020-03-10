@@ -54,20 +54,6 @@ PYBIND11_MODULE(gegenbauer, m)
             double: Evaluation of x and y using the weight function.
     )pbdoc");
 
-    m.def("u_scale", &u_scale, R"pbdoc(
-        Use the Pochhammer symbol to re-scale the Gegenbauer polynomials of degree `k`
-        and special parameter alfa.
-        This is done to prevent annhilation and explosion effects while computing the
-        kernels.
-
-        Args:
-            k (int): The degree of the Gegenbauer polynomial.
-            alfa (double): The special parameter alfa.
-
-        Returns:
-            double: The value that scales the given polynomial.
-    )pbdoc");
-
     m.def("kernel", &kernel, R"pbdoc(
         Compute the n-th degree Gegenbauer Mercer kernel, with special parameter alfa,
         defined as a product of Gegenbauer polynomials evaluated at `x` and `y`.

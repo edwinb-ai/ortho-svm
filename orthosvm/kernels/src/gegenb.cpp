@@ -40,9 +40,9 @@ double gegenbauerc(double x, int degree, double alfa)
 
         for (int i = 2; i <= degree; i++)
         {
-            result = 2.0 * x * (i + alfa - 1.0) * second_value;
-            result -= (i + 2.0 * alfa - 2.0) * first_value;
-            result /= i;
+            result = 2.0 * x * (i + alfa) * second_value;
+            result -= (i + (2.0 * alfa) - 1.0) * first_value;
+            result /= (i + 1.0);
             first_value = second_value;
             second_value = result;
         }
@@ -51,35 +51,41 @@ double gegenbauerc(double x, int degree, double alfa)
     }
 }
 
-double weights(double x, double y, double alfa)
+double weights(double x, double y, double alfa, int k)
 {
     //  This computes the weight function (measure) for the Gegenbauer polynomial
     //  with special paramter alfa
 
     double result = 0.0;
+    double weight_factor = 0.0;
+
+    // Compute the Pochhammer symbol
+    double term_1 = k + 1.0;
+    double term_2 = pochhammer(2.0 * alfa + 1.0, k) / pochhammer(1.0, k);
+
+    // Avoid rounding errors
+    if (term_2 <= 1E-10)
+    {
+        term_2 = 0.0;
+    }
+    else
+    {
+        term_2 *= term_2;
+    }
 
     //  A value between -0.5 and 0.5 is unity
     if (alfa <= 0.0)
     {
         result = 1.0;
     }
-    if (alfa > 0.5)
+    else
     {
-        double term_1 = (1.0 - (x * x)) * (1.0 - (y * y));
+        weight_factor = (1.0 - (x * x)) * (1.0 - (y * y));
         // We need to add an offset (0.1) to avoid the annihilation effect
-        result = std::pow(term_1, alfa - 0.5) + 0.1;
+        result = std::pow(weight_factor, alfa) + 0.1;
+        result /= (term_2 * term_1);
     }
     return result;
-}
-
-double u_scale(int k, double alfa)
-{
-    //  Use the Pochhammer symbol to re-scale the Gegenbauer polynomials of degree `k`
-    //  and special parameter alfa
-    double term_1 = 1.0 / (k + 1.0);
-    double term_2 = pochhammer(2.0 * alfa, k) / pochhammer(1.0, k);
-
-    return term_1 * term_2 * term_2;
 }
 
 double kernel(double x, double y, int degree, double alfa)
@@ -95,8 +101,7 @@ double kernel(double x, double y, int degree, double alfa)
         if (x != 0.0 and y != 0.0)
         {
             mult_result = gegenbauerc(x, k, alfa) * gegenbauerc(y, k, alfa);
-            mult_result *= weights(x, y, alfa);
-            mult_result /= u_scale(k, alfa);
+            mult_result *= weights(x, y, alfa, k);
             sum_result += mult_result;
         }
     }

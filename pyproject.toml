@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "orthosvm"
-version = "0.6.0"
+version = "0.7.1"
 description = "Compute orthogonal polynomials to be used as kernels in Support Vector Machines"
 authors = ["Edwin <developeredwin@gmail.com>"]
 license = "Apache-2.0"
